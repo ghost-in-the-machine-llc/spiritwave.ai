@@ -1,0 +1,68 @@
+/* ai-response */
+
+
+blockquote {
+    --margin: 3.2em;
+    margin-top: var(--margin);
+    margin-bottom: var(--margin);
+}
+
+blockquote {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    
+    display: grid;
+    grid-template-columns: calc(22px + ( var(--scale) * 4)) auto;
+    gap: calc(15px + ( var(--scale) * 4.7));
+
+    --ai-background: rgb(223 228 236);
+    --ai-color: rgb(10 16 81);
+    --ai-font: 'Noto Sans';
+    --ai-font-weight: 300;
+    --ai-name-weight: 700;
+
+    background: var(--ai-background);
+    color: var(--ai-color);
+    font-family: var(--ai-font);
+    font-size: calc(.9rem + ( var(--scale) * 2.7));
+    font-weight: var(--ai-font-weight);
+    line-height: 1.75;
+}
+
+blockquote img {
+    width: 100%;
+    border-radius: 2px;
+    margin-top: .3em;
+}
+
+blockquote p {
+    padding: 0;
+    margin: 0;
+}
+
+blockquote + figcaption {
+    margin-top: -3em;
+    font-size: .8em;
+    color: var(--lead-color);
+}
+
+.player {
+    display: grid;
+    grid-template-areas: 
+        'name'
+        'clip'
+    ;
+}
+
+.player p.name {
+    grid-area: name;
+    font-weight: var(--ai-name-weight);
+}
+
+.player p {
+    grid-area: clip;
+}
+
+.clip {
+    visibility: hidden;
+}
