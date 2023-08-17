@@ -3,15 +3,12 @@ const { stream } = require('@netlify/functions');
 const API_KEY = process.env.OPENAI_API_KEY;
 
 class OpenAIContentStream extends TransformStream {
-    static contentRegEx =
-        /data: {.+"delta":{"content":(".+")}/gm;
+    static contentRegEx = /data: {.+"delta":{"content":(".+")}/gm;
 
     constructor() {
         super({
             transform(chunk, controller) {
-                const matches = chunk.matchAll(
-                    OpenAIContentStream.contentRegEx
-                );
+                const matches = chunk.matchAll(OpenAIContentStream.contentRegEx);
                 try {
                     for (const [, group] of matches) {
                         // parse the JSON to decode
@@ -53,7 +50,6 @@ exports.handler = stream(async (event) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                // Set this environment variable to your own key
                 Authorization: `Bearer ${API_KEY}`,
             },
             body: JSON.stringify({
@@ -62,13 +58,12 @@ exports.handler = stream(async (event) => {
                     {
                         role: 'system',
                         content:
-                            'You are a baker, describe a kind of pie that matches the users input in 120 character and quote the pie name',
+                            'You are a baker, create a name and describe a kind of pie that matches the users input in 120 character. Put the name in quotes',
                     },
                     // Use "slice" to limit the length of the input to 500 characters
                     { role: 'user', content: pie.slice(0, 500) },
                 ],
                 temperature: 1.5,
-                // Use server-sent events to stream the response
                 stream: true,
             }),
         }
@@ -76,16 +71,14 @@ exports.handler = stream(async (event) => {
 
     const stream = res.body
         .pipeThrough(new TextDecoderStream())
-        .pipeThrough(new OpenAIContentStream());
+        .pipeThrough(new OpenAIContentStream())
+        .pipeThrough(new LogStdOutStream());
 
     return {
         headers: {
-            // This is the mimetype for server-sent events
             'content-type': 'text/event-stream',
-            // 'content-type': 'application/json',
         },
         statusCode: res.status,
-        // Pipe the event stream from OpenAI to the client
         body: stream,
     };
 });
