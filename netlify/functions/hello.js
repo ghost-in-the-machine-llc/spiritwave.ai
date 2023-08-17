@@ -4,7 +4,7 @@ const API_KEY = process.env.OPENAI_API_KEY;
 
 class OpenAIContentStream extends TransformStream {
     static contentRegEx =
-        /data: {.+"delta":{"content":"(.+)"}/gm;
+        /data: {.+"delta":{"content":(".+")}/gm;
 
     constructor() {
         super({
@@ -12,8 +12,15 @@ class OpenAIContentStream extends TransformStream {
                 const matches = chunk.matchAll(
                     OpenAIContentStream.contentRegEx
                 );
-                for (const [, content] of matches) {
-                    controller.enqueue(content);
+                try {
+                    for (const [, group] of matches) {
+                        // parse the JSON to decode
+                        // encoded characters like \", \', etc.
+                        controller.enqueue(JSON.parse(group));
+                    }
+                } catch (err) {
+                    // eslint-disable-next-line no-console
+                    console.log(err);
                 }
             },
         });
@@ -60,6 +67,7 @@ exports.handler = stream(async (event) => {
                     // Use "slice" to limit the length of the input to 500 characters
                     { role: 'user', content: pie.slice(0, 500) },
                 ],
+                temperature: 1.5,
                 // Use server-sent events to stream the response
                 stream: true,
             }),
@@ -69,7 +77,6 @@ exports.handler = stream(async (event) => {
     const stream = res.body
         .pipeThrough(new TextDecoderStream())
         .pipeThrough(new OpenAIContentStream());
-    // .pipeThrough(new LogStdOutStream());
 
     return {
         headers: {
