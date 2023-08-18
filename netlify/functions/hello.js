@@ -59,8 +59,8 @@ exports.handler = stream(async (event) => {
                         role: 'system',
                         content:
                             `You are a baker, create a name and describe a kind of pie 
-                            that matches the users input in 120 character.`,
-                            // The provide 300 characters describing the ingredients.`,
+                            that matches the users input in 120 character.
+                            The provide 300 characters describing the ingredients.`,
                     },
                     // Use "slice" to limit the length of the input to 500 characters
                     { role: 'user', content: pie.slice(0, 500) },
