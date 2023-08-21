@@ -1,12 +1,13 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Project CI
+name: SpiritWave CI
 
 on: [push, pull_request]
 
 jobs:
   run-ci:
+    name: Lint and test project 
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -15,11 +16,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-      - name: CI dependencies
-        run: npm ci
-      - name: Lint code
-        run: npm run lint
-      - name: Run tests
-        run: npm test
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
         env:
           CI: true
