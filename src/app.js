@@ -10,5 +10,5 @@ try {
 }
 catch (err) {
     // eslint-disable-next-line no-console
-    console.error(err);
+    console.error('oh noes!', err);
 }
