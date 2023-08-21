@@ -25,12 +25,22 @@ export async function streamCompletion(messages, options) {
         }
     );
 
-    // TODO: status code error is body or stream?
+    if (!res.ok) {
+        return {
+            headers: {
+                'content-type': 'application/json',
+            },
+            statusCode: res.status,
+            body: res.body,
+        };
+    }
 
     const stream = res.body
         .pipeThrough(new TextDecoderStream())
         .pipeThrough(new OpenAIContentStream());
         // .pipeThrough(new LogStdOutStream());
+
+    
 
     return {
         headers: {

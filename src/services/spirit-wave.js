@@ -1,9 +1,12 @@
 
-const API = '/.netlify/functions/hello';
+const API = '/.netlify/functions/greeting';
 
 export async function getGreeting() {
-    const { body } = await fetch(API);
-    // TODO: check status code
-    
-    return body.pipeThrough(new TextDecoderStream());
+    const res = await fetch(API);
+    if (!res.ok) {
+        const error = await res.json();
+        throw error;
+    }
+
+    return res.body.pipeThrough(new TextDecoderStream());
 }
