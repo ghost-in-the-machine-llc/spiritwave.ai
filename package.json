@@ -10,7 +10,8 @@
   "scripts": {
     "start": "netlify dev",
     "serve": "live-server --port=3000 --no-browser --ignore=**/node_modules/**,**/.netlify/**",
-    "test": "exit 0",
+    "lint": "eslint .",
+    "test": "qunit test/index.js",
     "netlify": "netlify status",
     "publish": "marked -o content/content.html -i content/content.md --gfm"
   },
@@ -18,10 +19,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "eslint": "^8.47.0",
     "jsdom": "^22.1.0",
     "live-server": "^1.1.0",
     "marked": "^5.0.2",
-    "netlify-cli": "^16.0.1"
+    "netlify-cli": "^16.0.1",
+    "qunit": "^2.19.4"
   },
   "dependencies": {
     "@netlify/functions": "^1.6.0"

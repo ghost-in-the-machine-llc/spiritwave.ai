@@ -16,8 +16,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 18.x
-    - run: npm i esm jsdom
-    - run: npx eslint .
-    - run: npx qunit test/index.js
+    - run: npm run lint
+    - run: npm test
       env:
         CI: true
