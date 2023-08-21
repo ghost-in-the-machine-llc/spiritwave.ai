@@ -7,7 +7,6 @@ const domStream = new DOMAppendStream(output);
 try {
     const stream = await getGreeting();
     stream.pipeTo(domStream);
-    const flah = 'boo';
 }
 catch (err) {
     // eslint-disable-next-line no-console
