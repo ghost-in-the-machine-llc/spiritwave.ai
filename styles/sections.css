@@ -1,0 +1,11 @@
+section {
+    opacity: 1;
+    transition:  opacity 500ms ease-out;
+}
+
+section.fade-out {
+    opacity: 0;
+    display: none;
+    transition:  opacity 500ms ease-out,
+        display 0ms 1000ms;
+}

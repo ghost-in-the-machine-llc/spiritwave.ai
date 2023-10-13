@@ -16,9 +16,10 @@ export async function streamCompletion(messages, options) {
                 Authorization: `Bearer ${API_KEY}`,
             },
             body: JSON.stringify({
-                model: 'gpt-3.5-turbo',
+                model: 'gpt-4',
                 messages,
-                temperature: 1.2, // TODO: what is default?
+                temperature: 1.2, // TODO: what is good default?
+                // temperature: 2.0, // TODO: change at different times?
                 stream: true,
                 ...options
             }),

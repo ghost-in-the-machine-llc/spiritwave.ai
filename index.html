@@ -53,8 +53,7 @@
     <!-- styles -->
     <link rel="stylesheet" href="/styles/global.css" />
     <link rel="stylesheet" href="/styles/form.css" />
-    <link rel="stylesheet" href="/styles/clips.css" />
-
+    <link rel="stylesheet" href="/styles/sections.css" />
 
     <!-- js -->
     <script defer referrerpolicy="origin" crossorigin="anonymous"
@@ -76,11 +75,25 @@
     </header>
 
     <main>
-        <section>
-            <h2>Greeting</h2>
-            <p id="output"></p>
+        <section id="intake-section">
+            <h2>Power Animal Intention</h2>
+            <form id="journey-form">
+                <label>
+                    Pick a color that calls to you, or pick at random:
+                    <p>
+                        <input name="color" id="key" type="color" required="true">
+                    </p>
+                </label>
+                <p>
+                    <button>Journey on it!</button>
+                </p>
+            </form>
         </section>
 
+        <section id="journey-section" class="fade-out">
+            <h2>Journey</h2>
+            <p id="output">blah blah</p>
+        </section>
 
     </main>
 

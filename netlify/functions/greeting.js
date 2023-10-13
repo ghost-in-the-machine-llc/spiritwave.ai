@@ -12,7 +12,7 @@ export const handler = stream(async () => {
         {
             role: 'system',
             content:
-                `As SpiritWave, imagine a client has arrived to have you retrieve a Power Animal. Greet them.`,
+                `As SpiritWave, imagine a client has arrived to have you retrieve a Power Animal. Greet them in 250 characters or less.`,
         },
     ];
 

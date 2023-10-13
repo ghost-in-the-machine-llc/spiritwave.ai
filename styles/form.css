@@ -1,20 +1,11 @@
-form {
-    background: var(--offset-color);
-}
-
-fieldset {
-    display: flex;
-    flex-wrap: wrap;
-    column-gap: 20px;
-    row-gap: 10px;
-}
 
 form input {
-    min-width: 310px;
     font-size: calc(1rem + ( var(--scale) * 3));
-    padding: 7px;
-    flex-grow: 2;
     height: 45px;
+}
+
+form input[type=color] {
+    width: 100px;
 }
 
 form select:invalid,
@@ -27,18 +18,7 @@ form button {
     height: 45px;
     padding: 7px 1.5em;
     font-size: calc(1.2rem + ( var(--scale) * 3));
-    background: var(--action-color);
+    background: var(--lead-color);
     border: 0;
     color: white;
-}
-
-form button:disabled {
-    opacity: 0.5;
-}
-
-#message-display {
-    height: 2em;
-    margin-top: .75em;
-    font-size: 1.1em;
-    font-weight: 900;
 }

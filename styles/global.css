@@ -300,3 +300,11 @@ li {
         transform: rotateZ(20deg);
     }
 }
+
+main {
+    display: grid;
+}
+
+section {
+    grid-area: 1/1;
+}
