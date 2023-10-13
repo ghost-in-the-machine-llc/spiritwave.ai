@@ -9,3 +9,9 @@ section.fade-out {
     transition:  opacity 500ms ease-out,
         display 0ms 1000ms;
 }
+
+section#output {
+    word-wrap: break-word; white-space: pre-wrap;
+    max-height: 90vh;
+    overflow-y: auto;
+}

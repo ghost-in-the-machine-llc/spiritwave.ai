@@ -18,7 +18,7 @@ export async function streamCompletion(messages, options) {
             body: JSON.stringify({
                 model: 'gpt-4',
                 messages,
-                temperature: 1.2, // TODO: what is good default?
+                temperature: 1.0, // TODO: what is good default?
                 // temperature: 2.0, // TODO: change at different times?
                 stream: true,
                 ...options
@@ -39,14 +39,14 @@ export async function streamCompletion(messages, options) {
     const stream = res.body
         .pipeThrough(new TextDecoderStream())
         .pipeThrough(new OpenAIContentStream());
-        // use to view streamed output on server console
+        // use to peek at streamed output via server console
         // .pipeThrough(new LogStdOutStream());
 
     
 
     return {
         headers: {
-            'content-type': 'text/event-stream',
+            'content-type': 'text/event-stream; charset=utf-8',
         },
         statusCode: res.status,
         body: stream,

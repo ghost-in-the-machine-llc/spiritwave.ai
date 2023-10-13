@@ -308,3 +308,7 @@ main {
 section {
     grid-area: 1/1;
 }
+
+pre {
+    word-wrap: break-word; white-space: pre-wrap;
+}
