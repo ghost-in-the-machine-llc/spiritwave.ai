@@ -39,6 +39,7 @@ export async function streamCompletion(messages, options) {
     const stream = res.body
         .pipeThrough(new TextDecoderStream())
         .pipeThrough(new OpenAIContentStream());
+        // use to view streamed output on server console
         // .pipeThrough(new LogStdOutStream());
 
     
