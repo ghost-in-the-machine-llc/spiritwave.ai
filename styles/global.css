@@ -15,7 +15,9 @@
     --scale: calc( ( var(--section-width) - var(--min-section-width) ) / (1200 - 300) );
     --half-scale: calc( --scale / 2 );
 
-    --gutter-margin: calc(10px + ( var(--scale) * 80));    
+    --gutter-margin: calc(10px + ( var(--scale) * 80));  
+    
+    --page-header-height: 40px;
 }
 
 
@@ -47,7 +49,7 @@ body::before {
     content: '';
     position: absolute;
     top: 0;
-    height: 40px;
+    height: var(--page-header-height);
     width: 100%;
     background: var(--header-background);
 }
@@ -55,7 +57,7 @@ body::before {
 .page-header {
     position: sticky;
     top: 0;
-    height: 40px;
+    height: var(--page-header-height);
     padding-top: 8px;
     padding-bottom: 9px;
 
@@ -106,6 +108,16 @@ body::before {
     text-shadow: rgb(255 255 255) 0 0 20px;
 }
 
+/* main */
+main {
+    height: calc(100vh - (var(--page-header-height)));
+    overflow-y: hidden;
+}
+
+#output {
+    height: 100%;
+    overflow-y: auto;
+}
 
 /* layout and spacing */
 
@@ -299,14 +311,6 @@ li {
     .support-arrow {
         transform: rotateZ(20deg);
     }
-}
-
-main {
-    display: grid;
-}
-
-section {
-    grid-area: 1/1;
 }
 
 pre {

@@ -1,5 +1,5 @@
 import { streamGreeting, streamInvocation } from './services/spirit-wave.js';
-import { domAppendStream, paragraphTransformStream } from './streams.js';
+import { domAppendStream } from './streams.js';
 
 const output = document.getElementById('output');
  
@@ -7,7 +7,9 @@ await tryStream(streamGreeting);
 await injectContinue();
 await tryStream(streamInvocation);
 await injectContinue();
-output.append('all done');
+const done = document.createElement('p');
+done.textContent = 'all done';
+output.append(done);
 
 async function injectContinue() {
     const p = document.createElement('p');
@@ -15,6 +17,10 @@ async function injectContinue() {
     button.textContent = 'continue...';
     p.append(button);
     output.append(p);
+    p.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+    });
         
     return new Promise(resolve => {
         button.addEventListener('click', async () => {
@@ -26,11 +32,11 @@ async function injectContinue() {
 
 async function tryStream(getStream) {
     const domStream = domAppendStream(output);   
-    const paragraphStream = paragraphTransformStream();
+    // const paragraphStream = paragraphTransformStream();
     try {
         const stream = await getStream();
         await stream
-            .pipeThrough(paragraphStream)
+            // .pipeThrough(paragraphStream)
             .pipeTo(domStream);
     }
     catch (err) {
