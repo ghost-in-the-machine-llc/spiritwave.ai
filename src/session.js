@@ -34,7 +34,8 @@ async function tryStream(getStream) {
             .pipeTo(domStream);
     }
     catch (err) {
-    // eslint-disable-next-line no-console
+        // TODO: figure how how to deal with failures
+        // eslint-disable-next-line no-console
         console.error('oh noes!', err);
     }
 }
