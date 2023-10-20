@@ -1,5 +1,8 @@
 {
     "cSpell.words": [
         "OPENAI"
-    ]
+    ],
+    "deno.enable": true,
+    "deno.lint": true,
+    "deno.unstable": true
 }
