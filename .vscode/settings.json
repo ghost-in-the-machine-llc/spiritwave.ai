@@ -6,7 +6,9 @@
     "deno.lint": false,
     "deno.unstable": true,
     "[typescript]": {
+        "editor.formatOnSave": true,
         "editor.defaultFormatter": "denoland.vscode-deno"
     },
-    "typescript.validate.enable": false
+    "typescript.validate.enable": false,
+    "deno.config": "deno.json"
 }

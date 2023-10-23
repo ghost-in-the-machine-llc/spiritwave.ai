@@ -1,10 +1,15 @@
 {
     "lint": {
-        "include": ["supabase/"],
-        "rules": {
-            "tags": ["recommended"],
-            "include": ["no-semicolons", "single-quote"],
-            "exclude": ["no-semicolons"]
-        }
+        "include": [
+            "supabase/"
+        ]
+    },
+    "fmt": {
+        "lineWidth": 80,
+        "indentWidth": 4,
+        "singleQuote": true,
+        "include": [
+            "supabase/"
+        ]
     }
 }
