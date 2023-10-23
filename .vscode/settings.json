@@ -2,13 +2,15 @@
     "cSpell.words": [
         "OPENAI"
     ],
-    "deno.enable": false,
-    "deno.lint": false,
+    "deno.enable": true,
+    "deno.lint": true,
     "deno.unstable": true,
+    "eslint.enable": false,
     "[typescript]": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "denoland.vscode-deno"
     },
     "typescript.validate.enable": false,
+    "typescript.tsserver.experimental.enableProjectDiagnostics": false,
     "deno.config": "deno.json"
 }
