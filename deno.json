@@ -1,0 +1,10 @@
+{
+    "lint": {
+        "include": ["supabase/"],
+        "rules": {
+            "tags": ["recommended"],
+            "include": ["no-semicolons", "single-quote"],
+            "exclude": ["no-semicolons"]
+        }
+    }
+}

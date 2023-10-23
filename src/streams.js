@@ -1,4 +1,3 @@
-
 export function domAppendStream(node) {
     const iframe = document.createElement('iframe');
     document.body.append(iframe);
@@ -7,13 +6,13 @@ export function domAppendStream(node) {
 
     const processRecords = (records) => {
         const [newNodes = null] = records
-            .filter(r => r.target === frame.body)
-            .map(r => r.addedNodes);
-        if (newNodes) newNodes.forEach(n => node.append(n));
+            .filter((r) => r.target === frame.body)
+            .map((r) => r.addedNodes);
+        if (newNodes) newNodes.forEach((n) => node.append(n));
     };
 
     const observer = new MutationObserver(processRecords);
-    
+
     observer.observe(frame, {
         subtree: true,
         childList: true,
@@ -35,13 +34,13 @@ export function domAppendStream(node) {
             scrollToBottom();
             observer.disconnect();
             iframe.remove();
-        }
+        },
     });
 }
 
 export function paragraphTransformStream() {
     let p = null;
-    const newParagraph = controller => {
+    const newParagraph = (controller) => {
         p = document.createElement('p');
         controller.enqueue(p);
     };

@@ -8,7 +8,7 @@ test('test your pure functions...', (expect) => {
     // Set up your arguments and expectations
     const expected = true;
 
-    //Act 
+    //Act
     // Call the function you're testing and set the result to a const
     const actual = true;
 

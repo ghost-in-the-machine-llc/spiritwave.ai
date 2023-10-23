@@ -7,7 +7,8 @@ Review core JavaScript syntax and context through testing functions
 Our `tests.js` file has access to a new built-in, `QUnit` and we will be using
 the `QUnit.test` method which will be assigned to a `test` variable.
 
-We will also be using the `expect` built-in that will be passed to our testing function
+We will also be using the `expect` built-in that will be passed to our testing
+function
 
 ## The test
 
@@ -19,15 +20,14 @@ const test = QUnit.test;
 
 // Each test case
 test('test name', (expect) => {
-
 });
 ```
 
-Part | Purpose
----|---
-`test` | Built-in QUnit testing method
-`'test name'` | Descriptive test name
-`(expect) => {...}` | Function (arrow function) that will be called _by qUnit_ to run the test
+| Part                | Purpose                                                                  |
+| ------------------- | ------------------------------------------------------------------------ |
+| `test`              | Built-in QUnit testing method                                            |
+| `'test name'`       | Descriptive test name                                                    |
+| `(expect) => {...}` | Function (arrow function) that will be called _by qUnit_ to run the test |
 
 ## Test setup
 
@@ -39,7 +39,7 @@ test('demo: adds two numbers', (expect) => {
     const y = 5;
     const expected = 7;
 
-    //Act 
+    //Act
     // Call the function you're testing and set the result to a const
     const actual = add(x, y);
 
@@ -49,15 +49,16 @@ test('demo: adds two numbers', (expect) => {
 });
 ```
 
-Part | Purpose
----|---
-`// Arrange` | What are the inputs and outputs?
-`// Act` | Run the function being tested!
-`// Assert` | Validate by asserting something is true
+| Part         | Purpose                                 |
+| ------------ | --------------------------------------- |
+| `// Arrange` | What are the inputs and outputs?        |
+| `// Act`     | Run the function being tested!          |
+| `// Assert`  | Validate by asserting something is true |
 
 ## Functions
 
-Write your tests and corresponding functions _one feature at a time_. Don't stub out all the functions and imports!
+Write your tests and corresponding functions _one feature at a time_. Don't stub
+out all the functions and imports!
 
 ### Exporting a function
 
@@ -74,11 +75,7 @@ export function add(x, y) {
 Use the following syntax to import the functions from the other file:
 
 ```js
-import {
-    add,
-    subtract,
-    areaOfTriangle,
-} from './functions.js';
+import { add, areaOfTriangle, subtract } from './functions.js';
 ```
 
 ## Process
@@ -91,10 +88,11 @@ For each function feature:
 1. Start with first test
 1. Decide on name for test and for function
 1. Add empty test in `tests.js`
-1. Create and `export` empty function in `functions.js` and import into `tests.js`
+1. Create and `export` empty function in `functions.js` and import into
+   `tests.js`
 1. Write test:
-    - Translate inputs and outputs into "Arrange" variables, 
-    - write the "Act" function call
-    - modify "Assert" if needed
+   - Translate inputs and outputs into "Arrange" variables,
+   - write the "Act" function call
+   - modify "Assert" if needed
 1. Add parameters to function, write code to make pass
 1. Implement additional tests if required (using same function)

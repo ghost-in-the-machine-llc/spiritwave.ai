@@ -4,7 +4,6 @@ const API_KEY = process.env.OPENAI_API_KEY;
 const COMPLETIONS_URL = 'https://api.openai.com/v1/chat/completions';
 
 export async function streamCompletion(messages, options) {
-
     // The response body returned from "fetch" is a "ReadableStream",
     // so you can return it directly in your streaming response
     const res = await fetch(
@@ -21,9 +20,9 @@ export async function streamCompletion(messages, options) {
                 temperature: 1.0, // TODO: what is good default?
                 // temperature: 2.0, // TODO: change at different times?
                 stream: true,
-                ...options
+                ...options,
             }),
-        }
+        },
     );
 
     if (!res.ok) {
@@ -39,10 +38,8 @@ export async function streamCompletion(messages, options) {
     const stream = res.body
         .pipeThrough(new TextDecoderStream())
         .pipeThrough(new OpenAIContentStream());
-        // use to peek at streamed output via server console
-        // .pipeThrough(new LogStdOutStream());
-
-    
+    // use to peek at streamed output via server console
+    // .pipeThrough(new LogStdOutStream());
 
     return {
         headers: {
