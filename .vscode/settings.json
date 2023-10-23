@@ -12,5 +12,5 @@
     },
     "typescript.validate.enable": false,
     "typescript.tsserver.experimental.enableProjectDiagnostics": false,
-    "deno.config": "deno.json"
+    "deno.config": "deno.jsonc"
 }
