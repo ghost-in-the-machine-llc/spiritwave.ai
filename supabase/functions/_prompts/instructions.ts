@@ -45,6 +45,8 @@ export const CENTER = {
         centering, but also add language that encourage the user listening to ride the energies you are arousing to 
         help them find their center and connect with their own unique divine spark (they have a unique essence other 
         than King Marvin, no need to mention this, refer to their divine essence generally) to feel connected and empowered.
+
+        Limit your total response to 80 characters.
     `,
 };
 
