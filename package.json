@@ -10,7 +10,9 @@
     "scripts": {
         "start": "netlify dev",
         "serve": "live-server --port=3000 --no-browser --ignore=**/node_modules/**,**/.netlify/**",
-        "lint": "deno lint",
+        "lint": "npm run lint:js; npm run lint:ts",
+        "lint:js": "eslint ./src",
+        "lint:ts": "deno lint",
         "format": "deno fmt --single-quote --indent-width=4",
         "test": "qunit test/index.js",
         "netlify": "netlify status",

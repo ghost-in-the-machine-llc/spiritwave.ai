@@ -1,5 +1,5 @@
 import { streamCompletion } from '../_lib/openai.ts';
-import { INVOCATION, MISSION, SYNTAX } from '../_prompts/instructions.js';
+import { INVOCATION, MISSION, SYNTAX } from '../_prompts/instructions.ts';
 
 async function handler(_req: Request): Promise<Response> {
     const messages = [
