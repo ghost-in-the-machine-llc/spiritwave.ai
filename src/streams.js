@@ -6,8 +6,8 @@ function addIFrame() {
     return {
         document: doc,
         body: doc.body,
-        isBodyTarget(target) {
-            return target === doc.body;
+        filterRecords(records) {
+            return records.filter(({ target }) => target === doc.body);
         },
         remove() { 
             iframe.remove(); 
@@ -20,25 +20,20 @@ function addIFrame() {
 
 export function domAppendStream(node) {
 
-    // iframe is removed in stream.close below
-    const iframe = addIFrame();
-
     // moves nodes added to the body of iframe to the 
     // target "node" param passed to the function
+    
+    const addToTarget = added => added.forEach(n => node.append(n)); 
+    const iframe = addIFrame(); // removed in stream.close
+
     const handleMutations = (records) => {
-        records = records.filter(({ target }) => iframe.isBodyTarget(target));
-        if (!records.length) return;
-        
-        // console.log('filtered', addedToBody);
-        const addedNodes = getAddedNodes(records);
-        
-        if (!addedNodes.length) return;
-        
-        addedNodes.forEach(n => node.append(n));  
+        const bodyRecords = iframe.filterRecords(records);
+        const addedNodes = getAddedNodes(bodyRecords);
+        addToTarget(addedNodes);
     };
 
-    // observer is drained and disconnected in stream.close
     const observer = new MutationObserver(handleMutations);
+    // is drained and disconnected in stream.close
 
     observer.observe(iframe.document, {
         subtree: true,
