@@ -1,13 +1,12 @@
 {
     "cSpell.words": [
         "nosniff",
-        "OPENAI"
+        "OPENAI",
     ],
     "deno.enable": true,
     "deno.lint": true,
     "deno.unstable": true,
     "deno.config": "deno.jsonc",
-    "eslint.enable": false,
     "[typescript]": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "denoland.vscode-deno"

@@ -26,8 +26,8 @@ export class LogStdOutStream extends TransformStream {
     constructor() {
         super({
             transform(chunk, controller) {
-                console.log(chunk)
-                // supabase doesn't output to console :(
+                console.log(chunk);
+                // supabase doesn't appear to route stdout to console ?!? :(
                 // Deno.stdout.write(new TextEncoder().encode(chunk));
                 controller.enqueue(chunk);
             },
