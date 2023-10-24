@@ -8,16 +8,12 @@
         "test": "test"
     },
     "scripts": {
-        "start": "netlify dev",
-        "serve": "live-server --port=3000 --no-browser --ignore=**/node_modules/**,**/.netlify/**",
+        "start": "live-server --port=5500 --no-browser --ignore=**/node_modules/**,**/.netlify/**",
         "lint": "npm run lint:js; npm run lint:ts",
         "lint:js": "eslint ./src",
         "lint:ts": "deno lint",
-        "format": "deno fmt --single-quote --indent-width=4",
         "test": "qunit test/index.js",
-        "netlify": "netlify status",
-        "publish": "marked -o content/content.html -i content/content.md --gfm",
-        "sb": "supabase start; supabase functions serve"
+        "server": "supabase start; supabase functions serve"
     },
     "keywords": [],
     "author": "",
@@ -27,10 +23,6 @@
         "jsdom": "^22.1.0",
         "live-server": "^1.1.0",
         "marked": "^5.0.2",
-        "netlify-cli": "^16.0.1",
         "qunit": "^2.19.4"
-    },
-    "dependencies": {
-        "@netlify/functions": "^1.6.0"
     }
 }

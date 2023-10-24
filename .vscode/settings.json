@@ -18,5 +18,6 @@
         "baseUri": "/api",
         "proxyUri": "http://localhost:54321/functions"
     },
-    "liveServer.settings.host": "localhost"
+    "liveServer.settings.host": "localhost",
+    "liveServer.settings.wait": 25,
 }
