@@ -1,62 +1,74 @@
-export function domAppendStream(node) {
+function addIFrame() {
     const iframe = document.createElement('iframe');
     document.body.append(iframe);
-    // iframe is removed in stream.close below
-    const { contentWindow: { document: frame } } = iframe;
+    const { contentWindow: { document: doc } } = iframe;
+    
+    return {
+        document: doc,
+        body: doc.body,
+        isBodyTarget(target) {
+            return target === doc.body;
+        },
+        remove() { 
+            iframe.remove(); 
+        },
+        write(chunk) { 
+            iframe.contentWindow.document.write(chunk);
+        }
+    };
+}
 
-    const processRecords = (records) => {
-        const [newNodes = null] = records
-            .filter((r) => r.target === frame.body)
-            .map((r) => r.addedNodes);
-        if (newNodes) newNodes.forEach((n) => node.append(n));
+export function domAppendStream(node) {
+
+    // iframe is removed in stream.close below
+    const iframe = addIFrame();
+
+    // moves nodes added to the body of iframe to the 
+    // target "node" param passed to the function
+    const handleMutations = (records) => {
+        records = records.filter(({ target }) => iframe.isBodyTarget(target));
+        if (!records.length) return;
+        
+        // console.log('filtered', addedToBody);
+        const addedNodes = getAddedNodes(records);
+        
+        if (!addedNodes.length) return;
+        
+        addedNodes.forEach(n => node.append(n));  
     };
 
-    const observer = new MutationObserver(processRecords);
+    // observer is drained and disconnected in stream.close
+    const observer = new MutationObserver(handleMutations);
 
-    observer.observe(frame, {
+    observer.observe(iframe.document, {
         subtree: true,
         childList: true,
     });
-    // observer is drained and disconnected in stream.close
 
+    // scroll container to end so user sees latest text
     const scrollToBottom = () => node.scrollTop = node.scrollHeight;
 
     return new WritableStream({
         write(chunk) {
             // eslint-disable-next-line eqeqeq
-            if (chunk != null) frame.write(chunk);
+            if (chunk != null) iframe.write(chunk);
             scrollToBottom();
         },
         close() {
             // process any remaining mutation observer events
             // see: https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver/takeRecords
-            processRecords(observer.takeRecords());
+            handleMutations(observer.takeRecords());
             scrollToBottom();
+            // clean-up:
             observer.disconnect();
             iframe.remove();
         },
     });
 }
 
-export function paragraphTransformStream() {
-    let p = null;
-    const newParagraph = (controller) => {
-        p = document.createElement('p');
-        controller.enqueue(p);
-    };
-
-    return new TransformStream({
-        start(controller) {
-            newParagraph(controller);
-        },
-        transform(chunk, controller) {
-            if ([...chunk].join('') === '.\n\n') {
-                p.append('.');
-                newParagraph(controller);
-                return;
-            }
-            p.append(chunk);
-            controller.enqueue();
-        },
-    });
+function getAddedNodes(records) {
+    return records
+        .map(r => r.addedNodes)
+        .flatMap(addedNodes => [...addedNodes])
+        .filter(r => r);
 }

@@ -1,4 +1,4 @@
-import { LogStdOutStream, OpenAIContentStream } from './streams.js';
+import { LogStdOutStream, OpenAIContentStream } from './streams.ts';
 
 const API_KEY = Deno.env.get('OPENAI_API_KEY');
 const COMPLETIONS_URL = 'https://api.openai.com/v1/chat/completions';
@@ -39,7 +39,7 @@ export async function streamCompletion(
             ?.pipeThrough(new TextDecoderStream())
             .pipeThrough(new OpenAIContentStream())
             // use to peek at streamed output via server console
-            .pipeThrough(new LogStdOutStream())
+            // .pipeThrough(new LogStdOutStream())
             .pipeThrough(new TextEncoderStream())
     ) ?? null;
 

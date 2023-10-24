@@ -32,12 +32,9 @@ async function injectContinue() {
 
 async function tryStream(getStream) {
     const domStream = domAppendStream(output);   
-    // const paragraphStream = paragraphTransformStream();
     try {
         const stream = await getStream();
-        await stream
-            // .pipeThrough(paragraphStream)
-            .pipeTo(domStream);
+        await stream.pipeTo(domStream);
     }
     catch (err) {
         // TODO: figure how how to deal with failures
