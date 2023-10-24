@@ -1,14 +1,35 @@
-Deno.serve(async (req) => {
-    const { name } = await req.json();
-    const data = {
-        message: `Hello bitch'N ${name}!`,
-    };
+function wait(ms: number): Promise<undefined> {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
 
-    return new Response(
-        JSON.stringify(data),
-        { headers: { 'Content-Type': 'application/json' } },
-    );
-});
+function handler(_req: Request): Response {
+    const body = new ReadableStream({
+        async start(controller) {
+            for (let i = 0; i < 5; i++) {
+                await wait(500);
+                console.log('count', i);
+                controller.enqueue(
+                    new TextEncoder().encode(`data: { "count": ${i} }\n`),
+                );
+            }
+            console.log('closing');
+            controller.close();
+        },
+        cancel() {
+            // cancel read
+        },
+    });
+
+    return new Response(body, {
+        headers: {
+            'content-type': 'text/event-stream; charset=utf-8',
+            // 'x-content-type-options': 'nosniff',
+        },
+    });
+}
+Deno.serve(handler);
 
 /* spell-checker: disable */
 

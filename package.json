@@ -14,7 +14,8 @@
         "format": "deno fmt --single-quote --indent-width=4",
         "test": "qunit test/index.js",
         "netlify": "netlify status",
-        "publish": "marked -o content/content.html -i content/content.md --gfm"
+        "publish": "marked -o content/content.html -i content/content.md --gfm",
+        "sb": "supabase start; supabase functions serve"
     },
     "keywords": [],
     "author": "",
