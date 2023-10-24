@@ -1,10 +1,12 @@
 {
     "cSpell.words": [
+        "nosniff",
         "OPENAI"
     ],
     "deno.enable": true,
     "deno.lint": true,
     "deno.unstable": true,
+    "deno.config": "deno.jsonc",
     "eslint.enable": false,
     "[typescript]": {
         "editor.formatOnSave": true,
@@ -12,5 +14,10 @@
     },
     "typescript.validate.enable": false,
     "typescript.tsserver.experimental.enableProjectDiagnostics": false,
-    "deno.config": "deno.jsonc"
+    "liveServer.settings.proxy": {
+        "enable": true,
+        "baseUri": "/api",
+        "proxyUri": "http://localhost:54321/functions"
+    },
+    "liveServer.settings.host": "localhost"
 }
