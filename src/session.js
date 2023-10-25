@@ -1,5 +1,5 @@
 import { streamGreeting, streamInvocation } from './services/spirit-wave.js';
-import { domAppendStream } from './streams.js';
+import { htmlToDomStream } from './streams.js';
 
 const output = document.getElementById('output');
  
@@ -31,7 +31,7 @@ async function injectContinue() {
 }
 
 async function tryStream(getStream) {
-    const domStream = domAppendStream(output);   
+    const domStream = htmlToDomStream(output);   
     try {
         const stream = await getStream();
         await stream.pipeTo(domStream);
