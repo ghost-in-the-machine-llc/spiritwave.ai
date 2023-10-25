@@ -1,39 +1,21 @@
-function addIFrame() {
-    const iframe = document.createElement('iframe');
-    document.body.append(iframe);
-    const { contentWindow: { document: doc } } = iframe;
+// streams incoming html to temp iframe document and
+// listens for nodes added to the body of iframe and
+// moves them to the target node param passed to fn
+export function domAppendStream(target) {
+    const append = added => added.forEach(n => target.append(n)); 
+    const iframe = setupProxy(); // removed in stream.close
     
-    return {
-        document: doc,
-        body: doc.body,
-        filterRecords(records) {
-            return records.filter(({ target }) => target === doc.body);
-        },
-        remove() { 
-            iframe.remove(); 
-        },
-        write(chunk) { 
-            iframe.contentWindow.document.write(chunk);
-        }
-    };
-}
-
-export function domAppendStream(node) {
-
-    // moves nodes added to the body of iframe to the 
-    // target "node" param passed to the function
-    
-    const addToTarget = added => added.forEach(n => node.append(n)); 
-    const iframe = addIFrame(); // removed in stream.close
-
     const handleMutations = (records) => {
         const bodyRecords = iframe.filterRecords(records);
         const addedNodes = getAddedNodes(bodyRecords);
-        addToTarget(addedNodes);
+        append(addedNodes);
     };
 
-    const observer = new MutationObserver(handleMutations);
-    // is drained and disconnected in stream.close
+    const observer = new MutationObserver(records => {
+        const bodyRecords = iframe.filterRecords(records);
+        const addedNodes = getAddedNodes(bodyRecords);
+        append(addedNodes);
+    }); // is drained and disconnected in stream.close
 
     observer.observe(iframe.document, {
         subtree: true,
@@ -41,7 +23,7 @@ export function domAppendStream(node) {
     });
 
     // scroll container to end so user sees latest text
-    const scrollToBottom = () => node.scrollTop = node.scrollHeight;
+    const scrollToBottom = () => target.scrollTop = target.scrollHeight;
 
     return new WritableStream({
         write(chunk) {
@@ -59,6 +41,26 @@ export function domAppendStream(node) {
             iframe.remove();
         },
     });
+}
+
+function setupProxy() {
+    const iframe = document.createElement('iframe');
+    document.body.append(iframe);
+    const { contentWindow: { document: doc } } = iframe;
+    
+    return {
+        document: doc,
+        body: doc.body,
+        filterRecords(records) {
+            return records.filter(({ target }) => target === doc.body);
+        },
+        remove() { 
+            iframe.remove(); 
+        },
+        write(chunk) { 
+            doc.write(chunk);
+        }
+    };
 }
 
 function getAddedNodes(records) {
