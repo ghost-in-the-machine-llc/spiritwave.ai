@@ -48,4 +48,4 @@ jobs:
         with:
           version: latest
           
-      - run: supabase functions deploy --project-ref $PROJECT_ID
+      - run: supabase functions deploy --project-ref $PROJECT_ID --debug
