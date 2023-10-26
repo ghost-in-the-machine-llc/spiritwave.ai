@@ -6,7 +6,6 @@ const COMPLETIONS_URL = 'https://api.openai.com/v1/chat/completions';
 export async function streamCompletion(
     messages: { role: string; content: string }[],
 ): Promise<Response> {
-    console.log('calling openAI');
     // body is a ReadableStream when opt { stream: true }
     const res = await fetch(
         COMPLETIONS_URL,
