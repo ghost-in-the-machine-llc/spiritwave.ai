@@ -6,7 +6,7 @@ name: SpiritWave CI
 on: [push, pull_request]
 
 env:  
-  SUPABASE_ACCESS_TOKEN: ${{ vars.SUPABASE_VAR_ACCESS_TOKEN }}
+  ACCESS_TOKEN: ${{ vars.SUPABASE_VAR_ACCESS_TOKEN }}
   SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
   # Retrieve <project-id> from dashboard url: https://app.supabase.com/project/<project-id>
   PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID}}
@@ -37,7 +37,7 @@ jobs:
 
       - run: echo "project id is $PROJECT_ID"
       - run: echo "supabase db pwd is $SUPABASE_DB_PASSWORD"
-      - run: echo "supabase access is $SUPABASE_ACCESS_TOKEN"
+      - run: echo "supabase access is $ACCESS_TOKEN"
 
       - name: Deploy to supabase
         uses: supabase/setup-cli@v1
