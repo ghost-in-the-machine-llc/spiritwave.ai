@@ -36,7 +36,9 @@ jobs:
         #   CI: true
 
       - run: echo "project id is $PROJECT_ID"
-      - run: echo "supabase info is $SUPABASE_DB_PASSWORD, $SUPABASE_ACCESS_TOKEN"
+      - run: echo "supabase db pwd is $SUPABASE_DB_PASSWORD"
+      - run: echo "supabase access is $SUPABASE_ACCESS_TOKEN"
+
       - name: Deploy to supabase
         uses: supabase/setup-cli@v1
         with:
