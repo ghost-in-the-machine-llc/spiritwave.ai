@@ -28,3 +28,16 @@ jobs:
       # - run: npm test
         env:
           CI: true
+
+      - name: Deploy to supabase
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+        env:  
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          # Retrieve <project-id> from dashboard url: https://app.supabase.com/project/<project-id>
+          PROJECT_ID: <project-id>
+          
+      - run: supabase link --project-ref $PROJECT_ID
+      - run: supabase db push
