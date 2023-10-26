@@ -16,7 +16,7 @@ const getStream = (url) => async () => {
 
 const SUPABASE_PROJECT_URL = window.SUPABASE_PROJECT_URL;
 const SUPABASE_API_KEY = window.SUPABASE_API_KEY;
-const API_KEY_QUERY = SUPABASE_API_KEY ? `?api_key=${encodeURIComponent(SUPABASE_API_KEY)}` : '';
+const API_KEY_QUERY = SUPABASE_API_KEY ? `?apikey=${encodeURIComponent(SUPABASE_API_KEY)}` : '';
 
 const API = `${SUPABASE_PROJECT_URL || ''}/api/v1${API_KEY_QUERY}`;
 console.log('SUPABASE PROJECT URL', API);
