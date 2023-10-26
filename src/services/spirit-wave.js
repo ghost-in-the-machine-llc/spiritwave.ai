@@ -14,7 +14,9 @@ const getStream = (url) => async () => {
     return res.body.pipeThrough(new TextDecoderStream());
 };
 
-const API = '/api/v1';
+const SUPABASE_PROJECT_URL = window.SUPABASE_PROJECT_URL || '';
+const API = `${SUPABASE_PROJECT_URL}/api/v1`;
+console.log('SUPABASE PROJECT URL', API);
 
 export const streamGreeting = getStream(`${API}/greeting`);
 export const streamInvocation = getStream(`${API}/invocation`);
