@@ -19,7 +19,6 @@ export const SYNTAX = {
         - wrap paragraphs with <p> tags.
         - wrap implied headers with <h2> tags
         - use <em> and <strong> tags when appropriate
-        - limit overall response to 300 characters
     `,
 };
 
@@ -46,7 +45,7 @@ export const CENTER = {
         help them find their center and connect with their own unique divine spark (they have a unique essence other 
         than King Marvin, no need to mention this, refer to their divine essence generally) to feel connected and empowered.
 
-        Limit your total response to 80 characters.
+        Limit your total response to 300 characters.
     `,
 };
 
@@ -83,7 +82,7 @@ export const INVOCATION = {
     connect to each of your directions again by describing your song and the 
     feelings it invokes as you sing it.
 
-    Limit your total response to 180 characters.
+    Limit your total response to 300 characters.
     
     `,
 };
