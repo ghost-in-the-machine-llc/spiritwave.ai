@@ -6,8 +6,9 @@ const COMPLETIONS_URL = 'https://api.openai.com/v1/chat/completions';
 export async function streamCompletion(
     messages: { role: string; content: string }[],
 ): Promise<Response> {
+    console.log('calling openAI');
     // body is a ReadableStream when opt { stream: true }
-    const { ok, status, body } = await fetch(
+    const res = await fetch(
         COMPLETIONS_URL,
         {
             method: 'POST',
@@ -25,8 +26,12 @@ export async function streamCompletion(
         },
     );
 
+    const { ok, status, body } = res;
+
     if (!ok) {
-        return new Response(body, {
+        const text = await res.text();
+        console.log('open AI call failed', text);
+        return new Response(text, {
             headers: {
                 'content-type': 'application/json',
             },
@@ -34,12 +39,14 @@ export async function streamCompletion(
         });
     }
 
+    console.log('openAI call succeeded');
+
     const stream = (
         body
             ?.pipeThrough(new TextDecoderStream())
             .pipeThrough(new OpenAIContentStream())
             // use to peek at streamed output via server console
-            // .pipeThrough(new LogStdOutStream())
+            .pipeThrough(new LogStdOutStream())
             .pipeThrough(new TextEncoderStream())
     ) ?? null;
 

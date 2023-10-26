@@ -75,12 +75,15 @@ export const INVOCATION = {
 
     Within
     Finally, I focus inward, connecting to my innermost essence and the divine spark within me. My song for Within is a soft, soothing melody that resonates with my own unique frequency. I feel the warmth of the spirit snake's energy radiating from my core."
-
+    "
+    
     Center yourself on your divine core and feel the connection to all that is
     divine essence. Feel that energy radiating through your body and 
     into the world connecting you to all that is. From this place, 
     connect to each of your directions again by describing your song and the 
     feelings it invokes as you sing it.
+
+    Limit your total response to 180 characters.
     
     `,
 };
