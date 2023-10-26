@@ -15,11 +15,18 @@ const getStream = (url) => async () => {
 };
 
 const SUPABASE_PROJECT_URL = window.SUPABASE_PROJECT_URL || '';
-const SUPABASE_API_KEY = window.SUPABASE_API_KEY;
-const API_KEY_QUERY = SUPABASE_API_KEY ? `?apikey=${encodeURIComponent(SUPABASE_API_KEY)}` : '';
+const API = `${SUPABASE_PROJECT_URL}/functions/v1`;
 
-const API = `${SUPABASE_PROJECT_URL}/functions/v1${API_KEY_QUERY}`;
+const API_KEY = window.SUPABASE_API_KEY;
+
+const API_KEY_QUERY = API_KEY ? `?apikey=${encodeURIComponent(API_KEY)}` : '';
+
+
+const getUrl = path => `${API}${path}${API_KEY_QUERY}`;
+
 console.log('API URL', API);
+console.log('API KEY', API_KEY_QUERY);
 
-export const streamGreeting = getStream(`${API}/greeting`);
-export const streamInvocation = getStream(`${API}/invocation`);
+
+export const streamGreeting = getStream(getUrl('/greeting'));
+export const streamInvocation = getStream(getUrl('/invocation'));
