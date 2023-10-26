@@ -6,7 +6,7 @@ name: SpiritWave CI
 on: [push, pull_request]
 
 env:  
-  SUPABASE_ACCESS_TOKEN: ${{ vars.SUPABASE_ACCESS_TOKEN }}
+  SUPABASE_ACCESS_TOKEN: ${{ vars.SUPABASE_VAR_ACCESS_TOKEN }}
   SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
   # Retrieve <project-id> from dashboard url: https://app.supabase.com/project/<project-id>
   PROJECT_ID: ${{ vars.SUPABASE_PROJECT_ID}}
