@@ -8,12 +8,14 @@
         "test": "test"
     },
     "scripts": {
-        "start": "live-server --port=5500 --no-browser --ignore=**/node_modules/**,**/.netlify/**",
+        "start": "supabase start; supabase functions serve",
         "lint": "npm run lint:js; npm run lint:ts",
         "lint:js": "eslint ./src",
         "lint:ts": "deno lint",
         "test": "qunit test/index.js",
-        "server": "supabase start; supabase functions serve"
+        "secrets:deploy": "supabase secrets set --env-file ./supabase/functions/.env --project-ref zekxhqiqlnzydflpmddi",
+        "secrets:list": "supabase secrets list --project-ref zekxhqiqlnzydflpmddi",
+        "functions:deploy": "supabase functions deploy --project-ref zekxhqiqlnzydflpmddi"
     },
     "keywords": [],
     "author": "",

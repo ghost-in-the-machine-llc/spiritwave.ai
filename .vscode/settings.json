@@ -2,6 +2,8 @@
     "cSpell.words": [
         "nosniff",
         "OPENAI",
+        "qunit",
+        "spiritwave"
     ],
     "deno.enable": true,
     "deno.lint": true,
