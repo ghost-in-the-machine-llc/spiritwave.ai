@@ -18,7 +18,7 @@
     "typescript.tsserver.experimental.enableProjectDiagnostics": false,
     "liveServer.settings.proxy": {
         "enable": true,
-        "baseUri": "/api",
+        "baseUri": "/functions",
         "proxyUri": "http://localhost:54321/functions"
     },
     "liveServer.settings.host": "localhost",
