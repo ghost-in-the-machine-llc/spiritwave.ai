@@ -24,9 +24,5 @@ const API_KEY_QUERY = API_KEY ? `?apikey=${encodeURIComponent(API_KEY)}` : '';
 
 const getUrl = path => `${API}${path}${API_KEY_QUERY}`;
 
-console.log('API URL', API);
-console.log('API KEY', API_KEY_QUERY);
-
-
 export const streamGreeting = getStream(getUrl('/greeting'));
 export const streamInvocation = getStream(getUrl('/invocation'));

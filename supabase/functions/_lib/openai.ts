@@ -30,7 +30,6 @@ export async function streamCompletion(
 
     if (!ok) {
         const text = await res.text();
-        console.log('open AI call failed', text);
         return new Response(text, {
             headers: {
                 ...corsHeaders,
@@ -39,8 +38,6 @@ export async function streamCompletion(
             status: status,
         });
     }
-
-    console.log('openAI call succeeded');
 
     const stream = (
         body

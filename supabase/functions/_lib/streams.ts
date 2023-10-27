@@ -1,4 +1,3 @@
-
 export class OpenAIContentStream extends TransformStream {
     // test cases: https://regex101.com/r/Bg9fLQ/1
     static contentRegEx = /data: {.+"delta":{"content":(".+")}/gm;
@@ -6,7 +5,9 @@ export class OpenAIContentStream extends TransformStream {
     constructor() {
         super({
             transform(chunk, controller) {
-                const matches = chunk.matchAll(OpenAIContentStream.contentRegEx);
+                const matches = chunk.matchAll(
+                    OpenAIContentStream.contentRegEx,
+                );
                 try {
                     for (const [, group] of matches) {
                         // parse the JSON to decode
@@ -26,7 +27,6 @@ export class LogStdOutStream extends TransformStream {
     constructor() {
         super({
             transform(chunk, controller) {
-                console.log(chunk);
                 // supabase doesn't appear to route stdout to console ?!? :(
                 // Deno.stdout.write(new TextEncoder().encode(chunk));
                 controller.enqueue(chunk);
