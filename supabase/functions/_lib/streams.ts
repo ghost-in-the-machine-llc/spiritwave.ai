@@ -11,7 +11,7 @@ export class OpenAIContentStream extends TransformStream {
                 try {
                     for (const [, group] of matches) {
                         // parse the JSON to decode
-                        // encoded characters like \", \', etc.
+                        // encoded characters like \", \', \n, etc.
                         controller.enqueue(JSON.parse(group));
                     }
                 } catch (err) {
