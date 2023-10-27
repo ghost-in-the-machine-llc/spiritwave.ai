@@ -1,25 +1,19 @@
 {
   "folders": [
-    {
-      "name": "frontend",
-      "path": "./src"
-    },
+
     {
       "name": "backend-functions",
       "path": "supabase/functions"
     },
     {
-      "name": "supabase-config",
-      "path": "./supabase"
-    },
-    {
       "name": "project-root",
       "path": "./"
-    },
+    }
   ],
   "settings": {
     "files.exclude": {
       "supabase/functions/": true
-    }
+    },
+    "liveServer.settings.multiRootWorkspaceName": "project-root"
   }
 }
