@@ -39,7 +39,7 @@ export function getAllContent(): TransformStream {
 export function streamToConsole(): WritableStream {
     return new WritableStream({
         write(chunk) {
-            console.log(chunk);
+            console.log('%c' + chunk, 'color: steelblue');
         },
     });
 }
