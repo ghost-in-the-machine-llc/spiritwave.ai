@@ -37,8 +37,8 @@ async function tryStream(getStream) {
         await stream.pipeTo(domStream);
     }
     catch (err) {
-        // TODO: figure how how to deal with failures
+        // TODO: better handling of failures. maybe a service at some point
         // eslint-disable-next-line no-console
-        console.error('oh noes!', err);
+        alert(err?.constructor?.name + ' - ' + err.message);
     }
 }
