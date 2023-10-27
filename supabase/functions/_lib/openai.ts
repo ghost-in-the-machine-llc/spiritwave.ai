@@ -1,4 +1,8 @@
-import { LogStdOutStream, OpenAIContentStream } from './streams.ts';
+import {
+    getAllContent,
+    OpenAIContentStream,
+    streamToConsole,
+} from './streams.ts';
 import { corsHeaders } from './cors.ts';
 
 const API_KEY = Deno.env.get('OPENAI_API_KEY');
@@ -39,14 +43,19 @@ export async function streamCompletion(
         });
     }
 
-    const stream = (
-        body
-            ?.pipeThrough(new TextDecoderStream())
+    let stream = null, response = null;
+    if (body) {
+        [stream, response] = body
+            .pipeThrough(new TextDecoderStream())
             .pipeThrough(new OpenAIContentStream())
-            // use to peek at streamed output via server console
-            .pipeThrough(new LogStdOutStream())
-            .pipeThrough(new TextEncoderStream())
-    ) ?? null;
+            .tee();
+
+        stream = stream.pipeThrough(new TextEncoderStream());
+        response
+            .pipeThrough(getAllContent())
+            // This will be a save to db of content when relevant
+            .pipeTo(streamToConsole());
+    }
 
     return new Response(stream, {
         headers: {

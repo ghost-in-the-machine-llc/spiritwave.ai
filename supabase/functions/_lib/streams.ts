@@ -23,14 +23,23 @@ export class OpenAIContentStream extends TransformStream {
     }
 }
 
-export class LogStdOutStream extends TransformStream {
-    constructor() {
-        super({
-            transform(chunk, controller) {
-                // supabase doesn't appear to route stdout to console ?!? :(
-                // Deno.stdout.write(new TextEncoder().encode(chunk));
-                controller.enqueue(chunk);
-            },
-        });
-    }
+export function getAllContent(): TransformStream {
+    let response = '';
+
+    return new TransformStream({
+        transform(chunk) {
+            response += chunk ?? '';
+        },
+        flush(controller) {
+            controller.enqueue(response);
+        },
+    });
+}
+
+export function streamToConsole(): WritableStream {
+    return new WritableStream({
+        write(chunk) {
+            console.log(chunk);
+        },
+    });
 }
