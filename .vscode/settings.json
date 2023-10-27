@@ -23,4 +23,5 @@
     },
     "liveServer.settings.host": "localhost",
     "liveServer.settings.wait": 25,
+    "liveServer.settings.NoBrowser": true,
 }
