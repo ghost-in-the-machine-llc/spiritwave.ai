@@ -1,4 +1,5 @@
 import { LogStdOutStream, OpenAIContentStream } from './streams.ts';
+import { corsHeaders } from './cors.ts';
 
 const API_KEY = Deno.env.get('OPENAI_API_KEY');
 const COMPLETIONS_URL = 'https://api.openai.com/v1/chat/completions';
@@ -32,6 +33,7 @@ export async function streamCompletion(
         console.log('open AI call failed', text);
         return new Response(text, {
             headers: {
+                ...corsHeaders,
                 'content-type': 'application/json',
             },
             status: status,
@@ -51,8 +53,9 @@ export async function streamCompletion(
 
     return new Response(stream, {
         headers: {
+            ...corsHeaders,
             'content-type': 'text/event-stream; charset=utf-8',
-            // 'x-content-type-options': 'nosniff',
+            'x-content-type-options': 'nosniff',
         },
         status: status,
     });
