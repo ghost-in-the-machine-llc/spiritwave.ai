@@ -29,7 +29,10 @@ jobs:
         with:
           deno-version: v1.x
           
-      - run: npm ci
+      - run: 
+          cd ./frontend
+          npm ci
+          cd ..
       - run: npm run lint
 
       - name: Setup Supabase
