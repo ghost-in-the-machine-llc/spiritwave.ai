@@ -1,7 +1,7 @@
 {
     "lint": {
         "include": [
-            "backend/"
+            "supabase/"
         ]
     },
     "fmt": {
@@ -9,7 +9,7 @@
         "indentWidth": 4,
         "singleQuote": true,
         "include": [
-            "backend/"
+            "supabase/"
         ]
     }
 }

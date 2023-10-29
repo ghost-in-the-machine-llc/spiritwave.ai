@@ -6,7 +6,7 @@
     },
     {
       "name": "backend",
-      "path": "backend"
+      "path": "supabase"
     },
     {
       "name": "project",
@@ -16,7 +16,7 @@
   "settings": {
     "files.exclude": {
       "frontend": true,
-      "backend": true
+      "supabase": true
     },
     "cSpell.words": [
       "Hyperlegible",

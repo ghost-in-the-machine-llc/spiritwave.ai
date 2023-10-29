@@ -46,4 +46,4 @@ jobs:
           
       - name: Deploy Functions
         if: github.base_ref == 'main'
-        run: supabase --workdir ./backend functions deploy --project-ref $PROJECT_ID
+        run: supabase functions deploy --project-ref $PROJECT_ID
