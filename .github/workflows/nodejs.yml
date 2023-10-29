@@ -29,11 +29,14 @@ jobs:
         with:
           deno-version: v1.x
           
-      - run: |
+      - name: Install CI Dependencies
+        run: |
           cd ./frontend
           npm ci
           cd ..
-      - run: npm run lint
+      
+      - name: Linting
+        run: npm run lint
 
       - name: Setup Supabase
         if: github.base_ref == 'main'
