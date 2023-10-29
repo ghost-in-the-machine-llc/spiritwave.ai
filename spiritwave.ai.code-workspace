@@ -1,16 +1,16 @@
 {
   "folders": [
     {
+      "name": "project",
+      "path": "./"
+    },
+    {
       "name": "frontend",
       "path": "frontend"
     },
     {
       "name": "backend",
       "path": "supabase"
-    },
-    {
-      "name": "project",
-      "path": "./"
     }
   ],
   "settings": {
@@ -19,10 +19,9 @@
       "supabase": true
     },
     "cSpell.words": [
-      "Hyperlegible",
-      "selkie",
       "apikey",
       "Bitstream",
+      "denoland",
       "Hyperlegible",
       "nosniff",
       "OPENAI",
@@ -44,6 +43,10 @@
     "deno.unstable": true,
     "deno.config": "./deno.jsonc",
     "typescript.validate.enable": false,
-    "typescript.tsserver.experimental.enableProjectDiagnostics": false
+    "typescript.tsserver.experimental.enableProjectDiagnostics": false,
+    "[typescript]": {
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "denoland.vscode-deno"
+    },
   }
 }
