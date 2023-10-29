@@ -1,19 +1,49 @@
 {
   "folders": [
-
     {
-      "name": "backend-functions",
-      "path": "supabase/functions"
+      "name": "frontend",
+      "path": "frontend"
     },
     {
-      "name": "project-root",
+      "name": "backend",
+      "path": "backend"
+    },
+    {
+      "name": "project",
       "path": "./"
     }
   ],
   "settings": {
     "files.exclude": {
-      "supabase/functions/": true
+      "frontend": true,
+      "backend": true
     },
-    "liveServer.settings.multiRootWorkspaceName": "project-root"
+    "cSpell.words": [
+      "Hyperlegible",
+      "selkie",
+      "apikey",
+      "Bitstream",
+      "Hyperlegible",
+      "nosniff",
+      "OPENAI",
+      "qunit",
+      "selkie",
+      "spiritwave"
+    ],
+    "liveServer.settings.multiRootWorkspaceName": "frontend",
+    "liveServer.settings.proxy": {
+      "enable": true,
+      "baseUri": "/functions",
+      "proxyUri": "http://localhost:54321/functions"
+    },
+    "liveServer.settings.host": "localhost",
+    "liveServer.settings.wait": 25,
+    "liveServer.settings.NoBrowser": true,
+    "deno.enable": false,
+    "deno.lint": true,
+    "deno.unstable": true,
+    "deno.config": "./deno.jsonc",
+    "typescript.validate.enable": false,
+    "typescript.tsserver.experimental.enableProjectDiagnostics": false
   }
 }

@@ -38,7 +38,10 @@ async function tryStream(getStream) {
     }
     catch (err) {
         // TODO: better handling of failures. maybe a service at some point
-        // eslint-disable-next-line no-console
-        alert(err?.constructor?.name + ' - ' + err.message);
+        let message = err?.message;
+        if (typeof message === 'object') {
+            message = JSON.stringify(message, true, 2);
+        }
+        alert(err?.constructor?.name + ' - ' + message);
     }
 }

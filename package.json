@@ -10,7 +10,7 @@
     "scripts": {
         "start": "supabase start; supabase functions serve",
         "lint": "npm run lint:js; npm run lint:ts",
-        "lint:js": "eslint ./src",
+        "lint:js": "eslint -c ./frontend/.eslintrc ./frontend/src",
         "lint:ts": "deno lint",
         "test": "qunit test/index.js",
         "secrets:deploy": "supabase secrets set --env-file ./supabase/functions/.env --project-ref zekxhqiqlnzydflpmddi",
@@ -23,8 +23,6 @@
     "devDependencies": {
         "eslint": "^8.47.0",
         "jsdom": "^22.1.0",
-        "live-server": "^1.1.0",
-        "marked": "^5.0.2",
         "qunit": "^2.19.4"
     }
 }

@@ -1,0 +1,22 @@
+{
+    "name": "spiritwave.ai",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "type": "module",
+    "directories": {
+        "test": "test"
+    },
+    "scripts": {
+        "lint": "eslint ./src",
+        "test": "qunit test/index.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "eslint": "^8.47.0",
+        "jsdom": "^22.1.0",
+        "qunit": "^2.19.4"
+    }
+}

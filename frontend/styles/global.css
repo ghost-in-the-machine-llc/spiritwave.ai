@@ -130,7 +130,7 @@ section, header, footer {
 }
 
 section:not(:last-child) {
-    margin-bottom: 8em;
+    margin-bottom: 2em;
 }
 
 section > *, header, footer {

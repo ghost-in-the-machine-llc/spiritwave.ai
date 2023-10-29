@@ -31,9 +31,6 @@ jobs:
           
       - run: npm ci
       - run: npm run lint
-      # - run: npm test
-        # env:
-        #   CI: true
 
       - name: Setup Supabase
         if: github.base_ref == 'main'

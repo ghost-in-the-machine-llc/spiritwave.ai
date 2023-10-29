@@ -9,10 +9,9 @@ const getStream = (url) => async () => {
             error = await res.text();
             if (error.startsWith('<!DOCTYPE html>')) {
                 const matches = error.matchAll(ExtractPreContentRegex);
-                let message = '';
+                let message = `${res.status}: ${res.statusText}`;
                 for (const [, group] of matches) {
-                    if (message) message += '\n';
-                    message += group ?? '';
+                    message += '\n' + (group ?? '');
                 }
 
                 throw message;
@@ -43,8 +42,12 @@ const getStream = (url) => async () => {
 };
 
 class FetchError extends Error {
-    constructor(err) {
-        super(`Unable to retrieve AI response: \n${err}`);
+    constructor(statusCode, statusText, err) {
+        let message = err?.message ?? err ?? '';
+        if (typeof message === 'object') {
+            message = JSON.stringify(message, true, 2);
+        }
+        super(`Unable to retrieve AI response: \n${message}`);
     }
 }
 
