@@ -7,11 +7,7 @@ on:
   workflow_run:
     workflows: ["CI"]
     types: [completed]
-
-    # push:
-#   branches: staging
-# pull_request: 
-#   branches: staging
+    branches: [staging,supabase-edge-fn]
 
 env:  
   SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
