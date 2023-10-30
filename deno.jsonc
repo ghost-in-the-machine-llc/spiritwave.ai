@@ -1,0 +1,15 @@
+{
+    "lint": {
+        "include": [
+            "supabase/functions"
+        ]
+    },
+    "fmt": {
+        "lineWidth": 80,
+        "indentWidth": 4,
+        "singleQuote": true,
+        "include": [
+            "supabase/functions"
+        ]
+    }
+}

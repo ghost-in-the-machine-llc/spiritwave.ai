@@ -1,32 +1,22 @@
 {
-  "name": "spiritwave.ai",
-  "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "type": "module",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "start": "netlify dev",
-    "serve": "live-server --port=3000 --no-browser --ignore=**/node_modules/**,**/.netlify/**",
-    "lint": "eslint .",
-    "test": "qunit test/index.js",
-    "netlify": "netlify status",
-    "publish": "marked -o content/content.html -i content/content.md --gfm"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "eslint": "^8.47.0",
-    "jsdom": "^22.1.0",
-    "live-server": "^1.1.0",
-    "marked": "^5.0.2",
-    "netlify-cli": "^16.0.1",
-    "qunit": "^2.19.4"
-  },
-  "dependencies": {
-    "@netlify/functions": "^1.6.0"
-  }
+    "name": "spiritwave.ai",
+    "version": "1.0.0",
+    "description": "",
+    "type": "module",
+    "scripts": {
+        "start": "supabase start; supabase functions serve",
+        "lint": "npm run lint:js; npm run lint:ts",
+        "lint:js": "npm run lint -w www",
+        "lint:ts": "deno lint",
+        "secrets:deploy": "supabase secrets set --env-file ./supabase/functions/.env --project-ref zekxhqiqlnzydflpmddi",
+        "secrets:list": "supabase secrets list --project-ref zekxhqiqlnzydflpmddi",
+        "functions:deploy": "supabase functions deploy --project-ref zekxhqiqlnzydflpmddi"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {},
+    "workspaces": [
+        "www"
+    ]
 }
