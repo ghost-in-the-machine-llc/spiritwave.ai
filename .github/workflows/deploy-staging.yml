@@ -5,9 +5,8 @@ name: Deploy to Staging
 
 on: 
   workflow_run:
-    workflows: ["CI"]
+    workflows: [CI]
     types: [completed]
-    branches: [staging,supabase-edge-fn]
 
 env:  
   SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
