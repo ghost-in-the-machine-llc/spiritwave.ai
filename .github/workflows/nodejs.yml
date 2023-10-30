@@ -31,7 +31,7 @@ jobs:
           
       - name: Install CI Dependencies
         run: |
-          cd ./frontend
+          cd ./www
           npm ci
           cd ..
       
