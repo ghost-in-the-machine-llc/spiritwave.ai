@@ -1,3 +1,5 @@
 # spiritwave.ai
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/8533a3f2-3270-4b9b-bf48-8c2c74d9801d/deploy-status)](https://app.netlify.com/sites/dreamy-syrniki-3be1ba/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/f6641e60-4fba-4a72-943d-76c96edada04/deploy-status)](https://app.netlify.com/sites/spiritwave-ai/deploys)
+
+

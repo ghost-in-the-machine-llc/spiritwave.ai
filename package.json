@@ -6,7 +6,7 @@
     "scripts": {
         "start": "supabase start; supabase functions serve",
         "lint": "npm run lint:js; npm run lint:ts",
-        "lint:js": "cd ./frontend; eslint ./src; cd ..",
+        "lint:js": "cd ./frontend; npm run lint; cd ..",
         "lint:ts": "deno lint",
         "secrets:deploy": "supabase secrets set --env-file ./supabase/functions/.env --project-ref zekxhqiqlnzydflpmddi",
         "secrets:list": "supabase secrets list --project-ref zekxhqiqlnzydflpmddi",
