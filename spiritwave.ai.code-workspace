@@ -1,0 +1,61 @@
+{
+  "folders": [
+    {
+      "name": "project",
+      "path": "./"
+    },
+    {
+      "name": "www",
+      "path": "www"
+    },
+    {
+      "name": "supabase config",
+      "path": "supabase"
+    },
+    {
+      "name": "edge functions",
+      "path": "supabase/functions"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "www": true,
+      "supabase": true,
+      "functions": true
+    },
+    "cSpell.words": [
+      "apikey",
+      "Bitstream",
+      "denoland",
+      "Hyperlegible",
+      "nosniff",
+      "OPENAI",
+      "qunit",
+      "selkie",
+      "spiritwave",
+      "zekxhqiqlnzydflpmddi"
+    ],
+    "liveServer.settings.multiRootWorkspaceName": "www",
+    "liveServer.settings.proxy": {
+      "enable": true,
+      "baseUri": "/functions",
+      "proxyUri": "http://localhost:54321/functions"
+    },
+    "liveServer.settings.host": "localhost",
+    "liveServer.settings.wait": 25,
+    "liveServer.settings.NoBrowser": true,
+    "deno.enable": false,
+    "deno.lint": true,
+    "deno.unstable": true,
+    "deno.config": "./deno.jsonc",
+    "deno.enablePaths": [
+      "supabase/functions"
+    ],
+    "typescript.validate.enable": false,
+    "typescript.tsserver.experimental.enableProjectDiagnostics": false,
+    "[typescript]": {
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "denoland.vscode-deno"
+    },
+  }
+}

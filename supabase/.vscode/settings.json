@@ -1,0 +1,6 @@
+{
+    "files.exclude": {
+        ".branches": true,
+        ".temp": true
+    }
+}
