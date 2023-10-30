@@ -30,10 +30,7 @@ jobs:
           deno-version: v1.x
           
       - name: Install CI Dependencies
-        run: |
-          cd ./www
-          npm ci
-          cd ..
+        run: npm ci -w www
       
       - name: Linting
         run: npm run lint
