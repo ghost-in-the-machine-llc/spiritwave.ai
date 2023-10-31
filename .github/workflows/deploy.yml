@@ -1,0 +1,37 @@
+name: Deploy Supabase
+
+on:
+  workflow_call:
+    inputs:
+      project-id:
+        required: true
+        type: string
+    secrets:
+      token:
+        required: true
+      db-password:
+        required: true
+
+jobs:
+  deploy-staging:
+    name: Setup & Deploy Supabase to Production
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.token }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.db-password }}
+      PROJECT_ID: ${{ inputs.project-id }}
+
+    steps:
+      - name: Log deployment info
+        run: |
+          echo Deploying Supabase from ${{ github.ref_name }} to project id $PROJECT_ID
+      
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+          
+      - name: Deploy Functions
+        run: supabase functions deploy --project-ref $PROJECT_ID

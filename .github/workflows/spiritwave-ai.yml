@@ -1,0 +1,40 @@
+name: Spirit Wave AI
+
+on: [push]
+
+jobs:
+  run-ci:
+    name: Run CI
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Use Deno v1 latest
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+          
+      - run: npm ci
+        name: Install CI dependencies 
+      - run: npm run lint:js
+        name: Lint www 
+      - run: npm run lint:ts
+        name: Lint supabase/functions 
+ 
+  deploy:
+    if: github.ref_name == 'staging' || github.ref_name == 'main'
+    needs: run-ci
+    name: Deployment Check
+    uses: ./.github/workflows/deploy.yml
+    with:
+      project-id: ${{ github.ref_name == 'main' && vars.SUPABASE_PROJECT_ID || vars.STAGING_SUPABASE_PROJECT_ID}}
+    secrets:
+      token: ${{ secrets.SUPABASE_ACCESS_TOKEN }}    
+      db-password: ${{ github.ref_name == 'main' && secrets.SUPABASE_DB_PASSWORD || secrets.STAGING_SUPABASE_DB_PASSWORD}}    

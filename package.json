@@ -5,7 +5,7 @@
     "type": "module",
     "scripts": {
         "start": "supabase start; supabase functions serve",
-        "lint": "npm run lint:js; npm run lint:ts",
+        "lint": "npm run lint:js && npm run lint:ts",
         "lint:js": "npm run lint -w www",
         "lint:ts": "deno lint",
         "secrets:deploy": "supabase secrets set --env-file ./supabase/functions/.env --project-ref zekxhqiqlnzydflpmddi",
