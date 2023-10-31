@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Log deployment info
         run: |
-          echo "Deploying Supabase from ${{ github.ref_name }} to project id $SUPABASE_PROJECT_ID"
+          echo Deploying Supabase from ${{ github.ref_name }} to project id $SUPABASE_PROJECT_ID
       
       - name: Checkout code
         uses: actions/checkout@v3
