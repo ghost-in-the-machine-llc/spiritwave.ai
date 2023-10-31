@@ -20,6 +20,8 @@ jobs:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.token }}
       SUPABASE_DB_PASSWORD: ${{ secrets.db-password }}
       SUPABASE_PROJECT_ID: ${{ inputs.project-id }}
+      PROJECT_ID: ${{ inputs.project-id }}
+      SUPABASE_PROJECT_REF: ${{ inputs.project-id }}
 
     steps:
       - name: Log deployment info
