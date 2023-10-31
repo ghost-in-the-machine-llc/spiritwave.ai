@@ -1,0 +1,30 @@
+name: Deploy Supabase
+
+on:
+  workflow_call:
+    inputs:
+      project-id:
+        required: true
+        type: string
+    secrets:
+      token:
+        required: true
+      db-password:
+        required: true
+
+jobs:
+  deploy-staging:
+    name: Setup & Deploy Supabase to Production
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.token }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.db-password }}
+      SUPABASE_PROJECT_ID: ${{ inputs.project-id }}
+
+    steps:
+      - name: Log Info
+        run: |
+          echo "project: $SUPABASE_PROJECT_ID"
+          echo "token: $SUPABASE_ACCESS_TOKEN"
+          echo "db-pwd: $SUPABASE_ACCESS_TOKEN"
+      
