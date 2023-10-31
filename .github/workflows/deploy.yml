@@ -34,4 +34,4 @@ jobs:
           version: latest
           
       - name: Deploy Functions
-        run: supabase functions deploy --project-ref $SUPABASE_PROJECT_ID #this may work w/o flag
+        run: supabase functions deploy
