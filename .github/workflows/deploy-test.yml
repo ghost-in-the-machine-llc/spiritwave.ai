@@ -26,5 +26,5 @@ jobs:
         run: |
           echo "project: $SUPABASE_PROJECT_ID"
           echo "token: $SUPABASE_ACCESS_TOKEN"
-          echo "db-pwd: $SUPABASE_ACCESS_TOKEN"
+          echo "db-pwd: $SUPABASE_DB_PASSWORD"
       
