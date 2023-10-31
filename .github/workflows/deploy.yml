@@ -13,8 +13,8 @@ on:
         required: true
 
 jobs:
-  deploy-staging:
-    name: Setup & Deploy Supabase to Production
+  deploy:
+    name: Setup & deploy Supabase
     runs-on: ubuntu-latest
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.token }}
@@ -33,5 +33,5 @@ jobs:
         with:
           version: latest
           
-      - name: Deploy Functions
+      - name: Deploy functions
         run: supabase functions deploy --project-ref $PROJECT_ID
