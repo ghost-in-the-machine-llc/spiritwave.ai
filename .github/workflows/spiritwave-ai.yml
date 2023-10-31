@@ -22,7 +22,8 @@ jobs:
           deno-version: v1.x
           
       - run: npm ci
-      - run: npm run lint
+      - run: npm run lint:js
+      - run: npm run lint:ts
   
   deploy:
     if: github.ref_name == 'staging'

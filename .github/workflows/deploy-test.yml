@@ -14,7 +14,7 @@ on:
 
 jobs:
   deploy-staging:
-    name: Setup & Deploy Supabase to Production
+    name: Deploy Supabase
     runs-on: ubuntu-latest
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.token }}
@@ -24,6 +24,7 @@ jobs:
     steps:
       - name: Log Info
         run: |
+          echo "env: ${{ github.ref_name }}"
           echo "project: $SUPABASE_PROJECT_ID"
           echo "token: $SUPABASE_ACCESS_TOKEN"
           echo "db-pwd: $SUPABASE_DB_PASSWORD"
