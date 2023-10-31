@@ -26,6 +26,7 @@ jobs:
   
   deploy:
     if: github.ref_name == 'staging'
+    needs: run-ci
     name: Deploy to Staging
     uses: ./.github/workflows/deploy-test.yml
     with:
