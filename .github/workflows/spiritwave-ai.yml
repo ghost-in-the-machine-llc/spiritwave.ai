@@ -27,7 +27,7 @@ jobs:
   deploy:
     if: github.ref_name == 'staging'
     name: Deploy to Staging
-    uses: "./.github/workflows/deploy-test.yml"
+    uses: ./.github/workflows/deploy-test.yml
     with:
       project-id: ${{ vars.STAGING_SUPABASE_PROJECT_ID}}
     secrets:
