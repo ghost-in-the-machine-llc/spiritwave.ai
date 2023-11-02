@@ -23,7 +23,7 @@ export class OpenAIContentStream extends TransformStream {
     }
 }
 
-export function getAllContent(): TransformStream {
+export function getAllContent() {
     let response = '';
 
     return new TransformStream({

@@ -1,49 +1,73 @@
-import { streamCompletion } from '../_lib/openai.ts';
+// import { streamCompletion } from '../_lib/openai.ts';
 import { handleCors } from '../_lib/cors.ts';
-import { CENTER, MISSION, SYNTAX, TRAINING } from '../_prompts/instructions.ts';
+import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2/dist/module/index.d.ts';
+import { Status } from 'https://deno.land/std/http/status.ts';
 import { createClient } from '../_lib/supabase.ts';
+import { SessionManager } from '../_lib/session.ts';
+import { createMessages } from '../_lib/prompt.ts';
 
 async function handler(req: Request): Promise<Response> {
-    const info = await getStep(req);
-    const body = JSON.stringify(info, null, 2);
-    return new Response(body, {
-        headers: {
-            'content-type': 'application/json',
-        },
-    });
+    const corsResponse = handleCors(req.method);
+    if (corsResponse) return corsResponse;
+
+    try {
+        const { url, headers } = req;
+        const dbClient = getDbClient(headers);
+        const manager = new SessionManager(dbClient);
+
+        const sessionId = getSessionId(url);
+        const { healerId, serviceId, stepId } = await manager.getSessionInfo(
+            sessionId,
+        );
+
+        const [healer, service, step] = await Promise.all([
+            manager.getHealer(healerId),
+            manager.getService(serviceId),
+            manager.getStepAfter(stepId),
+        ]);
+
+        const messages = createMessages(healer, service, step);
+
+        const info = messages;
+
+        const body = JSON.stringify(info, null, 2);
+        return new Response(body, {
+            headers: {
+                'content-type': 'application/json',
+            },
+        });
+    } catch (err) {
+        console.log('***Trapped Error ***\n', err);
+
+        return new Response(err.message ?? err.toString(), {
+            status: err.status ?? 500,
+        });
+    }
 }
 
 Deno.serve(handler);
 
-async function getStep(req: Request) {
-    const { searchParams } = new URL(req.url);
+class HttpError extends Error {
+    #code: number | null;
+    #text: string | null;
+
+    constructor(code: number, text: string) {
+        super();
+        this.#code = code;
+        this.#text = text;
+    }
+}
+
+function getSessionId(url: string): number {
+    const { searchParams } = new URL(url);
     const sessionId = searchParams.get('sessionId')!;
-    console.log('session', sessionId);
-    // TODO: handle no sessionId
-    const token = req.headers.get('Authorization')!;
-    const client = createClient(token);
-    console.log(token);
+    if (!sessionId || Number.isNaN(sessionId)) {
+        throw new HttpError(Status.BadRequest, 'No valid sessionId found');
+    }
+    return Number.parseInt(sessionId);
+}
 
-    const { data, error } = await client
-        .from('session')
-        .select('stepId:step_id')
-        .eq('id', sessionId)
-        .single();
-
-    if (error) console.log(error);
-    if (data) console.log(data);
-    const { stepId } = data!;
-
-    let query = client
-        .from('step')
-        .select();
-
-    query = stepId ? query.eq('prior_id', stepId) : query.is('prior_id', null);
-
-    const { data: d2, error: e2 } = await query;
-
-    if (e2) console.log(e2);
-    if (d2) console.log(d2);
-
-    return d2;
+function getDbClient(headers: Headers): SupabaseClient {
+    const token = headers.get('Authorization')!;
+    return createClient(token);
 }
