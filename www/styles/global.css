@@ -5,6 +5,7 @@
     --lead-color: rgb(95 95 107);
     --placeholder-color: rgb(136, 136, 153);
     --action-color: rgb(59, 120, 244);
+    --error-color: rgb(197, 40, 40);
 }
 
 :root {
@@ -305,4 +306,8 @@ li {
 
 pre {
     word-wrap: break-word; white-space: pre-wrap;
+}
+
+.hidden {
+    display: none;
 }

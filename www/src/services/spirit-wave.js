@@ -1,5 +1,13 @@
+import { watchAuth } from './auth.js';
+
 // Tests for this regex: https://regex101.com/r/5zXb2v/2
 const ExtractPreContentRegex = /<pre>(.+?)<\/pre>/gims;
+
+let token = null;
+
+watchAuth((event, session) => {
+    token = session.access_token;
+});
 
 const getStream = (url) => async () => {
     const res = await getResponse(url);
@@ -62,10 +70,7 @@ function getResponse(url) {
     try {
         return fetch(url, {
             headers: {
-                /* spell-checker: disable */
-                // TODO: use logged in supabase user
-                // Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0'
-                /* spell-checker: enable */
+                Authorization: `Bearer ${token}`
             }
         });
     }

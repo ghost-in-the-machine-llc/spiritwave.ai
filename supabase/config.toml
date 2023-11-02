@@ -132,7 +132,3 @@ port = 54327
 vector_port = 54328
 # Configure one of the supported backends: `postgres`, `bigquery`.
 backend = "postgres"
-
-[functions]
-greeting.verify_jwt = false
-invocation.verify_jwt = false
