@@ -9,8 +9,32 @@ watchAuth((event, session) => {
     token = session.access_token;
 });
 
-const getStream = (url) => async () => {
-    const res = await getResponse(url);
+const SUPABASE_PROJECT_URL = window.SUPABASE_PROJECT_URL || '';
+const API_URL = `${SUPABASE_PROJECT_URL}/functions/v1/play`;
+
+// const API_KEY = window.SUPABASE_API_KEY;
+// const API_KEY_QUERY = API_KEY ? `?apikey=${encodeURIComponent(API_KEY)}` : '';
+
+// const getUrl = path => `${API_URL}${path}${API_KEY_QUERY}`;
+
+
+function getResponse(url, sessionId) {
+    try {
+        return fetch(`${url}?sessionId=${sessionId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+    }
+    catch (err) {
+        // eslint-disable-next-line no-console
+        console.log (err);
+        throw new ConnectivityError(err);
+    }
+}
+
+export const getStream = async (sessionId) => {
+    const res = await getResponse(API_URL, sessionId);
     try {
         if (!res.ok) {
             let error = null;
@@ -66,28 +90,3 @@ class ConnectivityError extends Error {
     }
 }
 
-function getResponse(url) {
-    try {
-        return fetch(url, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-    }
-    catch (err) {
-        // eslint-disable-next-line no-console
-        console.log (err);
-        throw new ConnectivityError(err);
-    }
-}
-
-const SUPABASE_PROJECT_URL = window.SUPABASE_PROJECT_URL || '';
-const API_URL = `${SUPABASE_PROJECT_URL}/functions/v1`;
-
-const API_KEY = window.SUPABASE_API_KEY;
-const API_KEY_QUERY = API_KEY ? `?apikey=${encodeURIComponent(API_KEY)}` : '';
-
-const getUrl = path => `${API_URL}${path}${API_KEY_QUERY}`;
-
-export const streamGreeting = getStream(getUrl('/greeting'));
-export const streamInvocation = getStream(getUrl('/invocation'));
