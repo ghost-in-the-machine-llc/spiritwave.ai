@@ -35,7 +35,10 @@ const signOutButton = document.getElementById('sign-out-button');
 signOutButton.addEventListener('click', signOut);
 
 const startButton = document.getElementById('start-button');
-startButton.addEventListener('click', startSession);
+startButton.addEventListener('click', () => {
+    hide(sessionSection); 
+    startSession();
+});
 
 watchAuth((_event, session) => {
     session ? sessionMode() : authMode();
