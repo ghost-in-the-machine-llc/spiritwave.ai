@@ -13,7 +13,7 @@ export interface Message {
     content: string;
 }
 
-async function streamCompletion(
+export async function streamCompletion(
     messages: Message[],
 ): Promise<Response> {
     // body is a ReadableStream when opt { stream: true }
