@@ -11,18 +11,29 @@ export async function startSession() {
         return;
     }
     
-    const { id:sessionId } = data;
-
-    const streamAI = () => getStream(sessionId);
-
-    console.log('session id', sessionId);
-
-    await tryStream(streamAI);
+    const { id: sessionId } = data;
+    const stream = await getStream(sessionId);
+    await tryStream(stream);
     await injectContinue();
 
     const done = document.createElement('p');
     done.textContent = 'all done';
     output.append(done); // *** output
+}
+
+async function tryStream(stream) {
+    const domStream = htmlToDomStream(output); // *** output
+    try {
+        await stream.pipeTo(domStream);
+    }
+    catch (err) {
+        // TODO: better handling of failures. maybe a service at some point
+        let message = err?.message;
+        if (typeof message === 'object') {
+            message = JSON.stringify(message, true, 2);
+        }
+        alert(err?.constructor?.name + ' - ' + message);
+    }
 }
 
 async function injectContinue() {
@@ -42,20 +53,4 @@ async function injectContinue() {
             resolve();
         });
     });
-}
-
-async function tryStream(getStream) {
-    const domStream = htmlToDomStream(output); // *** output
-    try {
-        const stream = await getStream();
-        await stream.pipeTo(domStream);
-    }
-    catch (err) {
-        // TODO: better handling of failures. maybe a service at some point
-        let message = err?.message;
-        if (typeof message === 'object') {
-            message = JSON.stringify(message, true, 2);
-        }
-        alert(err?.constructor?.name + ' - ' + message);
-    }
 }

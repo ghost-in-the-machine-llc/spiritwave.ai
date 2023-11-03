@@ -1,5 +1,10 @@
 import { client } from './supabase.js';
 
+export let token = null;
+watchAuth((_event, session) => {
+    token = session?.access_token ?? null;
+});
+
 export function watchAuth(callback) {
     client.auth.onAuthStateChange(callback);
 }
