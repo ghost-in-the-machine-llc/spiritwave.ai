@@ -5,6 +5,7 @@ import { Status } from 'https://deno.land/std/http/status.ts';
 import { createClient } from '../_lib/supabase.ts';
 import { SessionManager } from '../_lib/session.ts';
 import { createMessages } from '../_lib/prompt.ts';
+import { streamCompletion } from '../_lib/openai.ts';
 
 async function handler(req: Request): Promise<Response> {
     const corsResponse = handleCors(req.method);
@@ -27,15 +28,7 @@ async function handler(req: Request): Promise<Response> {
         ]);
 
         const messages = createMessages(healer, service, step);
-
-        const info = messages;
-
-        const body = JSON.stringify(info, null, 2);
-        return new Response(body, {
-            headers: {
-                'content-type': 'application/json',
-            },
-        });
+        return streamCompletion(messages);
     } catch (err) {
         console.log('***Trapped Error ***\n', err);
 

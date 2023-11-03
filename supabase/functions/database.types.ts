@@ -1,5 +1,4 @@
-// export type * from './schema.gen.ts';
-import type { Database } from './schema.gen.ts';
+import { Database } from './schema.gen.ts';
 
 export type Tables<T extends keyof Database['public']['Tables']> =
     Database['public']['Tables'][T]['Row'];
