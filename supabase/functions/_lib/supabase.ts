@@ -1,5 +1,5 @@
 import type { Database } from '../schema.gen.ts';
-import { PostgrestSingleResponse, SupabaseClient } from '@supabase/types';
+import type { PostgrestSingleResponse, SupabaseClient } from '@supabase/types';
 import { createClient as create } from '@supabase';
 
 export function createClient(
@@ -16,21 +16,9 @@ export function createClient(
     );
 }
 
-interface Options {
-    throwOnNoData: boolean;
-}
-
-class NoDataError extends Error {}
-const DEFAULT: Options = { throwOnNoData: false };
-
 export function handleResponse<T>(
     { data, error }: PostgrestSingleResponse<T>,
-    options: Options = DEFAULT,
 ): NonNullable<T> {
     if (error) throw error;
-    if (options.throwOnNoData && !data) {
-        throw new NoDataError();
-    }
-
     return data!;
 }

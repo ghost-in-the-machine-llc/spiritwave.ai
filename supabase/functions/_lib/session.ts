@@ -8,9 +8,15 @@ import type { Healer, Service, Step } from '../database.types.ts';
 import { handleResponse } from './supabase.ts';
 
 interface StepInfo {
-    stepId: number;
-    healerId: number;
-    serviceId: number;
+    step_id: number;
+    healer_id: number;
+    service_id: number;
+}
+
+interface Session {
+    healer: Healer;
+    service: Service;
+    step_id: number;
 }
 
 export class SessionManager {
@@ -19,15 +25,15 @@ export class SessionManager {
     constructor(client: SupabaseClient<Database>) {
         this.#client = client;
     }
-
+    /*
     async getHealer(healerId: number): Promise<Healer> {
         const res: PostgrestSingleResponse<Healer> = await this.#client
             .from('healer')
             .select()
-            .eq('id', healerId)
+            .eq('id', 99)
             .single();
 
-        return await handleResponse(res, { throwOnNoData: true });
+        return await handleResponse(res);
     }
 
     async getService(serviceId: number): Promise<Service> {
@@ -37,7 +43,7 @@ export class SessionManager {
             .eq('id', serviceId)
             .single();
 
-        return await handleResponse(res, { throwOnNoData: true });
+        return await handleResponse(res);
     }
 
     async getSessionInfo(sessionId: number): Promise<StepInfo> {
@@ -45,14 +51,40 @@ export class SessionManager {
             .#client
             .from('session')
             .select(`
-                stepId: step_id,
-                healerId: healer_id,
-                serviceId: service_id
+                step_id,
+                healer_id,
+                service_id
             `)
             .eq('id', sessionId)
             .maybeSingle();
 
-        return await handleResponse(res, { throwOnNoData: true });
+        return await handleResponse(res);
+    }
+    */
+
+    async getSession(sessionId: number): Promise<Session> {
+        const res: PostgrestSingleResponse<Session> = await this
+            .#client
+            .from('session')
+            .select(`
+                id,
+                healer(*),
+                service(*),
+                step_id
+            `)
+            .eq('id', sessionId)
+            .single();
+
+        return await handleResponse(res);
+    }
+
+    async updateSessionStep(sessionId: number, stepId: number) {
+        const { error } = await this.#client
+            .from('session')
+            .update({ step_id: stepId })
+            .eq('id', sessionId);
+
+        if (error) throw error;
     }
 
     async getStepAfter(stepId: number | null): Promise<Step> {

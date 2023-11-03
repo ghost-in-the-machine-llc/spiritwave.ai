@@ -1,10 +1,10 @@
+import { Status, STATUS_TEXT } from 'http/status';
 import { handleCors } from '../_lib/cors.ts';
-import type { SupabaseClient } from '@supabase/types';
-import { Status } from '@http/status';
 import { createClient } from '../_lib/supabase.ts';
 import { SessionManager } from '../_lib/session.ts';
 import { createMessages } from '../_lib/prompt.ts';
 import { streamCompletion } from '../_lib/openai.ts';
+import { HttpError } from '../_lib/http.ts';
 
 async function handler(req: Request): Promise<Response> {
     const corsResponse = handleCors(req.method);
@@ -12,54 +12,61 @@ async function handler(req: Request): Promise<Response> {
 
     try {
         const { url, headers } = req;
-        const dbClient = getDbClient(headers);
+        const auth = headers.get('Authorization')!;
+        const dbClient = createClient(auth);
         const manager = new SessionManager(dbClient);
 
         const sessionId = getSessionId(url);
-        const { healerId, serviceId, stepId } = await manager.getSessionInfo(
+
+        const { healer, service, step_id } = await manager.getSession(
             sessionId,
         );
-
-        const [healer, service, step] = await Promise.all([
-            manager.getHealer(healerId),
-            manager.getService(serviceId),
-            manager.getStepAfter(stepId),
-        ]);
+        const step = await manager.getStepAfter(step_id);
+        if (!step) {
+            // all done!
+            // TODO: how should we signal this?
+            return new Response();
+        } else {
+            // no "awaiting", code execution for this function continues...
+            // manager.updateSessionStep(sessionId, step.id);
+        }
 
         const messages = createMessages(healer, service, step);
         return streamCompletion(messages);
     } catch (err) {
-        console.log('***Trapped Error ***\n', err);
+        const { message } = err;
 
-        return new Response(err.message ?? err.toString(), {
-            status: err.status ?? 500,
+        if (err.code === 'PGRST116') {
+            throw new HttpError(
+                Status.NotFound,
+                'The provided id does not exist or you do not have access',
+            );
+        }
+
+        if (err instanceof HttpError) {
+            return new Response(JSON.stringify({ message }), {
+                status: err.statusCode,
+                statusText: err.statusText,
+            });
+        }
+
+        return new Response(message ?? err.toString(), {
+            status: Status.InternalServerError,
+            statusText: STATUS_TEXT[Status.InternalServerError],
         });
     }
 }
 
 Deno.serve(handler);
 
-class HttpError extends Error {
-    #code: number | null;
-    #text: string | null;
-
-    constructor(code: number, text: string) {
-        super();
-        this.#code = code;
-        this.#text = text;
-    }
-}
-
 function getSessionId(url: string): number {
     const { searchParams } = new URL(url);
     const sessionId = searchParams.get('sessionId')!;
     if (!sessionId || Number.isNaN(sessionId)) {
-        throw new HttpError(Status.BadRequest, 'No valid sessionId found');
+        throw new HttpError(
+            Status.BadRequest,
+            'sessionId not included in the request',
+        );
     }
     return Number.parseInt(sessionId);
-}
-
-function getDbClient(headers: Headers): SupabaseClient {
-    const token = headers.get('Authorization')!;
-    return createClient(token);
 }

@@ -8,6 +8,7 @@ export const SYNTAX = `
         - wrap paragraphs with <p> tags.
         - wrap implied headers with <h2> tags
         - use <em> and <strong> tags when appropriate
+        - limit to no more than 250 characters
     `;
 
 export function createMessages(

@@ -1,9 +1,9 @@
+import { corsHeaders } from './cors.ts';
 import {
     getAllContent,
     OpenAIContentStream,
     streamToConsole,
 } from './streams.ts';
-import { corsHeaders } from './cors.ts';
 
 const API_KEY = Deno.env.get('OPENAI_API_KEY');
 const COMPLETIONS_URL = 'https://api.openai.com/v1/chat/completions';
@@ -16,7 +16,6 @@ export interface Message {
 export async function streamCompletion(
     messages: Message[],
 ): Promise<Response> {
-    // body is a ReadableStream when opt { stream: true }
     const res = await fetch(
         COMPLETIONS_URL,
         {
