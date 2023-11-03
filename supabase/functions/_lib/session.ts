@@ -2,7 +2,7 @@ import {
     PostgrestMaybeSingleResponse,
     PostgrestSingleResponse,
     SupabaseClient,
-} from 'https://esm.sh/@supabase/supabase-js@2/dist/module/index.d.ts';
+} from '@supabase/types';
 import type { Database } from '../schema.gen.ts';
 import type { Healer, Service, Step } from '../database.types.ts';
 import { handleResponse } from './supabase.ts';

@@ -1,7 +1,6 @@
-// import { streamCompletion } from '../_lib/openai.ts';
 import { handleCors } from '../_lib/cors.ts';
-import type { SupabaseClient } from 'https://esm.sh/@supabase/supabase-js@2/dist/module/index.d.ts';
-import { Status } from 'https://deno.land/std/http/status.ts';
+import type { SupabaseClient } from '@supabase/types';
+import { Status } from '@http/status';
 import { createClient } from '../_lib/supabase.ts';
 import { SessionManager } from '../_lib/session.ts';
 import { createMessages } from '../_lib/prompt.ts';

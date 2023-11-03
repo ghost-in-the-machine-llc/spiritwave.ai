@@ -1,9 +1,6 @@
 import type { Database } from '../schema.gen.ts';
-import {
-    PostgrestSingleResponse,
-    SupabaseClient,
-} from 'https://esm.sh/@supabase/supabase-js@2/dist/module/index.d.ts';
-import { createClient as create } from 'https://esm.sh/@supabase/supabase-js@2';
+import { PostgrestSingleResponse, SupabaseClient } from '@supabase/types';
+import { createClient as create } from '@supabase';
 
 export function createClient(
     Authorization: string,

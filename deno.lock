@@ -4,6 +4,7 @@
     "https://deno.land/std/http/http_status.ts": "https://deno.land/std@0.205.0/http/http_status.ts",
     "https://deno.land/std/http/status.ts": "https://deno.land/std@0.205.0/http/status.ts",
     "https://esm.sh/@supabase/supabase-js@2": "https://esm.sh/@supabase/supabase-js@2.38.4",
+    "https://esm.sh/@supabase/supabase-js@2/": "https://esm.sh/@supabase/supabase-js@2.38.4/",
     "https://esm.sh/@supabase/supabase-js@2/dist/module/index.d.ts": "https://esm.sh/v133/@supabase/supabase-js@2.38.4/dist/module/index.d.ts"
   },
   "remote": {
