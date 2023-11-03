@@ -112,7 +112,7 @@ body::before {
 /* main */
 main {
     height: calc(100vh - (var(--page-header-height)));
-    overflow-y: hidden;
+    overflow-y: auto;
 }
 
 #output {
