@@ -1,6 +1,5 @@
 import { Status, STATUS_TEXT } from 'http/status';
 import { corsHeaders, handleCors } from '../_lib/cors.ts';
-
 import { HealingSessionManager } from '../_lib/HealingSessionManager.ts';
 import { createMessages } from '../_lib/prompt.ts';
 import { streamCompletion } from '../_lib/openai.ts';
@@ -14,34 +13,33 @@ async function handler(req: Request): Promise<Response> {
     try {
         const url = new URL(req.url);
         const sessionId = getSessionId(url);
-        const auth = req.headers.get('Authorization')!;
-        const token = auth.replace(/^Bearer /, '');
+        const userToken = getUserToken(req.headers);
 
-        const manager = new HealingSessionManager(token, sessionId);
+        const manager = new HealingSessionManager(userToken, sessionId);
         const { healer, service, step_id } = await manager.getSession();
 
         const step = await manager.getStepAfter(step_id);
-
-        // return new Response(JSON.stringify(step), {
-        //     headers: {
-        //         'content-type': 'application/json',
-        //     },
-        // });'
-
         if (!step) {
-            // all done!
+            // done, no more steps...
             // update status in healing session
             // TODO: how should we signal this to the requestor?
-            return new Response();
-        } else {
-            // no "awaiting", code execution for this function continues...
-            // manager.updateSessionStep(sessionId, step.id);
+            return new Response('done', {
+                headers: {
+                    ...corsHeaders,
+                },
+                status: 200, // there is probably some code for this
+            });
         }
 
         const messages = createMessages(healer, service, step);
         const { status, stream } = await streamCompletion(messages);
         const [response, save] = stream.tee();
 
+        // We are going to start responding with the stream
+        // and don't want to block just to do post-message clean-up.
+        // By not "awaiting" and using events, we allow code execution
+        // to move thru these lines and get to the response...
+        manager.updateSessionStep(sessionId, step.id);
         save
             .pipeTo(getAllContent((response) => {
                 console.log({ sessionId, messages, response });
@@ -83,6 +81,11 @@ async function handler(req: Request): Promise<Response> {
 
 Deno.serve(handler);
 
+function getUserToken(headers: Headers): string {
+    const auth = headers.get('Authorization')!;
+    return auth.replace(/^Bearer /, '');
+}
+
 function getSessionId(url: URL): number {
     const { searchParams } = url;
     const sessionId = searchParams.get('sessionId')!;
@@ -94,3 +97,9 @@ function getSessionId(url: URL): number {
     }
     return Number.parseInt(sessionId);
 }
+
+// return new Response(JSON.stringify({ healer, service, step_id }), {
+//     headers: {
+//         'content-type': 'application/json',
+//     },
+// });

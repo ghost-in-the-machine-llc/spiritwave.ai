@@ -12,12 +12,6 @@ import {
 } from './supabase.ts';
 import { getUserPayload } from './jwt.ts';
 
-interface StepInfo {
-    step_id: number;
-    healer_id: number;
-    service_id: number;
-}
-
 interface Session {
     healer: Healer;
     service: Service;
@@ -25,21 +19,19 @@ interface Session {
 }
 
 export class HealingSessionManager {
-    #userClient: SupabaseClient<Database>;
+    // #userClient: SupabaseClient<Database>;
     #serviceClient: SupabaseClient<Database>;
     #uid: string;
     // This is "healing session", not a server session
     #sessionId: number;
 
-    constructor(token: string, sessionId: number) {
-        const payload = getUserPayload(token);
+    constructor(userToken: string, sessionId: number) {
+        const payload = getUserPayload(userToken);
         this.#uid = payload.sub;
         this.#sessionId = sessionId;
 
-        this.#userClient = createClient(token);
+        // this.#userClient = createClient(userToken);
         this.#serviceClient = createServiceClient();
-
-        // console.log(token, payload, this.#uid, this.#sessionId);
     }
 
     /*
@@ -81,7 +73,7 @@ export class HealingSessionManager {
 
     async getSession(): Promise<Session> {
         const res: PostgrestSingleResponse<Session> = await this
-            .#userClient
+            .#serviceClient
             .from('session')
             .select(`
                 id,
