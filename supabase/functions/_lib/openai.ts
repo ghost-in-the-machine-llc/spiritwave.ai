@@ -1,9 +1,6 @@
-import { corsHeaders } from './cors.ts';
-import {
-    getAllContent,
-    OpenAIContentStream,
-    streamToConsole,
-} from './streams.ts';
+import { Status } from 'http/status';
+import { HttpError } from './http.ts';
+import { OpenAIContentStream } from './streams.ts';
 
 const API_KEY = Deno.env.get('OPENAI_API_KEY');
 const COMPLETIONS_URL = 'https://api.openai.com/v1/chat/completions';
@@ -15,7 +12,7 @@ export interface Message {
 
 export async function streamCompletion(
     messages: Message[],
-): Promise<Response> {
+): Promise<{ status: Status; stream: ReadableStream }> {
     const res = await fetch(
         COMPLETIONS_URL,
         {
@@ -38,35 +35,17 @@ export async function streamCompletion(
 
     if (!ok) {
         const text = await res.text();
-        return new Response(text, {
-            headers: {
-                ...corsHeaders,
-                'content-type': 'application/json',
-            },
-            status: status,
-        });
+        let message = text;
+        try {
+            message = JSON.parse(text);
+        } catch (_) { /* no-op */ }
+
+        throw new HttpError(status, message);
     }
 
-    let stream = null, response = null;
-    if (body) {
-        [stream, response] = body
-            .pipeThrough(new TextDecoderStream())
-            .pipeThrough(new OpenAIContentStream())
-            .tee();
+    const stream = body!
+        .pipeThrough(new TextDecoderStream())
+        .pipeThrough(new OpenAIContentStream());
 
-        stream = stream.pipeThrough(new TextEncoderStream());
-        response
-            .pipeThrough(getAllContent())
-            // This will be a save to db of content when relevant
-            .pipeTo(streamToConsole());
-    }
-
-    return new Response(stream, {
-        headers: {
-            ...corsHeaders,
-            'content-type': 'text/event-stream; charset=utf-8',
-            'x-content-type-options': 'nosniff',
-        },
-        status: status,
-    });
+    return { status, stream };
 }

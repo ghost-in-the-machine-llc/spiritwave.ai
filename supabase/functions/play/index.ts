@@ -1,30 +1,37 @@
 import { Status, STATUS_TEXT } from 'http/status';
-import { handleCors } from '../_lib/cors.ts';
-import { createClient } from '../_lib/supabase.ts';
-import { SessionManager } from '../_lib/session.ts';
+import { corsHeaders, handleCors } from '../_lib/cors.ts';
+
+import { HealingSessionManager } from '../_lib/HealingSessionManager.ts';
 import { createMessages } from '../_lib/prompt.ts';
 import { streamCompletion } from '../_lib/openai.ts';
 import { HttpError } from '../_lib/http.ts';
+import { getAllContent } from '../_lib/streams.ts';
 
 async function handler(req: Request): Promise<Response> {
     const corsResponse = handleCors(req.method);
     if (corsResponse) return corsResponse;
 
     try {
-        const { url, headers } = req;
-        const auth = headers.get('Authorization')!;
-        const dbClient = createClient(auth);
-        const manager = new SessionManager(dbClient);
-
+        const url = new URL(req.url);
         const sessionId = getSessionId(url);
+        const auth = req.headers.get('Authorization')!;
+        const token = auth.replace(/^Bearer /, '');
 
-        const { healer, service, step_id } = await manager.getSession(
-            sessionId,
-        );
+        const manager = new HealingSessionManager(token, sessionId);
+        const { healer, service, step_id } = await manager.getSession();
+
         const step = await manager.getStepAfter(step_id);
+
+        // return new Response(JSON.stringify(step), {
+        //     headers: {
+        //         'content-type': 'application/json',
+        //     },
+        // });'
+
         if (!step) {
             // all done!
-            // TODO: how should we signal this?
+            // update status in healing session
+            // TODO: how should we signal this to the requestor?
             return new Response();
         } else {
             // no "awaiting", code execution for this function continues...
@@ -32,7 +39,22 @@ async function handler(req: Request): Promise<Response> {
         }
 
         const messages = createMessages(healer, service, step);
-        return streamCompletion(messages);
+        const { status, stream } = await streamCompletion(messages);
+        const [response, save] = stream.tee();
+
+        save
+            .pipeTo(getAllContent((response) => {
+                console.log({ sessionId, messages, response });
+            }));
+
+        return new Response(response.pipeThrough(new TextEncoderStream()), {
+            headers: {
+                ...corsHeaders,
+                'content-type': 'text/event-stream; charset=utf-8',
+                'x-content-type-options': 'nosniff',
+            },
+            status: status,
+        });
     } catch (err) {
         const { message } = err;
 
@@ -50,6 +72,8 @@ async function handler(req: Request): Promise<Response> {
             });
         }
 
+        console.log(err);
+
         return new Response(message ?? err.toString(), {
             status: Status.InternalServerError,
             statusText: STATUS_TEXT[Status.InternalServerError],
@@ -59,13 +83,13 @@ async function handler(req: Request): Promise<Response> {
 
 Deno.serve(handler);
 
-function getSessionId(url: string): number {
-    const { searchParams } = new URL(url);
+function getSessionId(url: URL): number {
+    const { searchParams } = url;
     const sessionId = searchParams.get('sessionId')!;
     if (!sessionId || Number.isNaN(sessionId)) {
         throw new HttpError(
             Status.BadRequest,
-            'sessionId not included in the request',
+            'Healing sessionId not included in the request',
         );
     }
     return Number.parseInt(sessionId);

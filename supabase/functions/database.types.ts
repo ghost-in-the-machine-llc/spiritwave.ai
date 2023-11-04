@@ -8,3 +8,5 @@ export type Enums<T extends keyof Database['public']['Enums']> =
 export type Step = Tables<'step'>;
 export type Healer = Tables<'healer'>;
 export type Service = Tables<'service'>;
+export type Moment = Tables<'moment'>;
+export type Session = Tables<'session'>;

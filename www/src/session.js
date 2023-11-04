@@ -7,6 +7,7 @@ const output = document.getElementById('output'); // *** output
 export async function startSession() {
     const { data, error } = await createSession();
     if (error) {
+        // eslint-disable-next-line no-console
         console.log(error);
         return;
     }

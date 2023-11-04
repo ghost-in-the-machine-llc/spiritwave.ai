@@ -5,7 +5,12 @@ import {
 } from '@supabase/types';
 import type { Database } from '../schema.gen.ts';
 import type { Healer, Service, Step } from '../database.types.ts';
-import { handleResponse } from './supabase.ts';
+import {
+    createClient,
+    createServiceClient,
+    handleResponse,
+} from './supabase.ts';
+import { getUserPayload } from './jwt.ts';
 
 interface StepInfo {
     step_id: number;
@@ -19,15 +24,27 @@ interface Session {
     step_id: number;
 }
 
-export class SessionManager {
-    #client: SupabaseClient<Database>;
+export class HealingSessionManager {
+    #userClient: SupabaseClient<Database>;
+    #serviceClient: SupabaseClient<Database>;
+    #uid: string;
+    // This is "healing session", not a server session
+    #sessionId: number;
 
-    constructor(client: SupabaseClient<Database>) {
-        this.#client = client;
+    constructor(token: string, sessionId: number) {
+        const payload = getUserPayload(token);
+        this.#uid = payload.sub;
+        this.#sessionId = sessionId;
+
+        this.#userClient = createClient(token);
+        this.#serviceClient = createServiceClient();
+
+        // console.log(token, payload, this.#uid, this.#sessionId);
     }
+
     /*
     async getHealer(healerId: number): Promise<Healer> {
-        const res: PostgrestSingleResponse<Healer> = await this.#client
+        const res: PostgrestSingleResponse<Healer> = await this.#userClient
             .from('healer')
             .select()
             .eq('id', 99)
@@ -37,7 +54,7 @@ export class SessionManager {
     }
 
     async getService(serviceId: number): Promise<Service> {
-        const res: PostgrestSingleResponse<Service> = await this.#client
+        const res: PostgrestSingleResponse<Service> = await this.#userClient
             .from('service')
             .select()
             .eq('id', serviceId)
@@ -48,7 +65,7 @@ export class SessionManager {
 
     async getSessionInfo(sessionId: number): Promise<StepInfo> {
         const res: PostgrestMaybeSingleResponse<StepInfo> = await this
-            .#client
+            .#userClient
             .from('session')
             .select(`
                 step_id,
@@ -62,9 +79,9 @@ export class SessionManager {
     }
     */
 
-    async getSession(sessionId: number): Promise<Session> {
+    async getSession(): Promise<Session> {
         const res: PostgrestSingleResponse<Session> = await this
-            .#client
+            .#userClient
             .from('session')
             .select(`
                 id,
@@ -72,23 +89,17 @@ export class SessionManager {
                 service(*),
                 step_id
             `)
-            .eq('id', sessionId)
+            // eventually add service_id and healer_id
+            .eq('id', this.#sessionId)
+            .eq('uid', this.#uid)
+            .is('status', null)
             .single();
 
         return await handleResponse(res);
     }
 
-    async updateSessionStep(sessionId: number, stepId: number) {
-        const { error } = await this.#client
-            .from('session')
-            .update({ step_id: stepId })
-            .eq('id', sessionId);
-
-        if (error) throw error;
-    }
-
     async getStepAfter(stepId: number | null): Promise<Step> {
-        let query = this.#client
+        let query = this.#serviceClient
             .from('step')
             .select();
         query = stepId
@@ -99,5 +110,17 @@ export class SessionManager {
             .maybeSingle();
 
         return handleResponse(res);
+    }
+
+    async updateSessionStep(sessionId: number, stepId: number) {
+        const { error } = await this.#serviceClient
+            .from('session')
+            .update({ step_id: stepId })
+            .eq('id', sessionId);
+
+        if (error) throw error;
+    }
+
+    async saveMoment(): Promise<void> {
     }
 }

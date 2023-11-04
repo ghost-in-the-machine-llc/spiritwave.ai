@@ -23,15 +23,17 @@ export class OpenAIContentStream extends TransformStream {
     }
 }
 
-export function getAllContent() {
+export type AllContentCallback = (content: string) => void;
+
+export function getAllContent(callback: AllContentCallback) {
     let response = '';
 
-    return new TransformStream({
-        transform(chunk) {
+    return new WritableStream({
+        write(chunk) {
             response += chunk ?? '';
         },
-        flush(controller) {
-            controller.enqueue(response);
+        close() {
+            callback(response);
         },
     });
 }
