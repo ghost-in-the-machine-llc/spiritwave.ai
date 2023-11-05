@@ -1,6 +1,9 @@
 import { Status, STATUS_TEXT } from 'http/status';
 import { corsHeaders, handleCors } from '../_lib/cors.ts';
-import { HealingSessionManager } from '../_lib/HealingSessionManager.ts';
+import {
+    HealingSessionManager,
+    Status as SessionStatus,
+} from '../_lib/HealingSessionManager.ts';
 import { createMessages, createMessagesFrom } from '../_lib/prompt.ts';
 import { Message, streamCompletion } from '../_lib/openai.ts';
 import { HttpError } from '../_lib/http.ts';
@@ -19,7 +22,7 @@ async function handler(req: Request): Promise<Response> {
         const manager = new HealingSessionManager(userToken, sessionId);
         const sessionInfo = await manager.getOpenSessionInfo();
         if (!sessionInfo) return getNoSessionResponse();
-        if (sessionInfo.status === 'done') {
+        if (sessionInfo.status === SessionStatus.Done) {
             return getSessionDoneResponse(sessionId);
         }
         const priorStepId = sessionInfo.step_id;
@@ -42,6 +45,35 @@ async function handler(req: Request): Promise<Response> {
                 'content-type': 'application/json',
             },
         });
+
+        // if (!step) {
+        //     // done, no more steps...
+        //     manager.updateSessionStatus('done');
+        //     return getSessionDoneResponse(sessionId);
+        // }
+
+        // const messages = await getPromptMessages(manager, priorMessages, step);
+        // const { status, stream } = await streamCompletion(messages);
+        // const [response, save] = stream.tee();
+
+        // // We are going to start responding with the stream
+        // // and don't want to block just to do post-message clean-up.
+        // // By not "awaiting" and using events, we allow code execution
+        // // to move thru these lines and get to the response...
+        // manager.updateSessionStep(step.id);
+        // save
+        //     .pipeTo(getAllContent((response) => {
+        //         manager.saveMoment({ messages, response, step_id: step.id });
+        //     }));
+
+        // return new Response(response.pipeThrough(new TextEncoderStream()), {
+        //     headers: {
+        //         ...corsHeaders,
+        //         'content-type': 'text/event-stream; charset=utf-8',
+        //         'x-content-type-options': 'nosniff',
+        //     },
+        //     status: status,
+        // });
     } catch (err) {
         const { message } = err;
         console.error(err);

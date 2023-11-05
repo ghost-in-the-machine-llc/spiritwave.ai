@@ -4,7 +4,13 @@ import type {
     SupabaseClient,
 } from '@supabase/types';
 import type { Database } from '../schema.gen.ts';
-import type { Healer, Moment, Service, Step } from '../database.types.ts';
+import type {
+    Healer,
+    Moment,
+    Service,
+    SessionStatus,
+    Step,
+} from '../database.types.ts';
 import type { Message } from './openai.ts';
 
 import {
@@ -17,7 +23,7 @@ import { getUserPayload } from './jwt.ts';
 interface SessionInfo {
     id: number;
     step_id: number;
-    status: string;
+    status: SessionStatus;
 }
 
 interface Session {
@@ -31,6 +37,12 @@ interface NewMoment {
     step_id: number;
     messages: Message[];
     response: string;
+}
+
+export enum Status {
+    Created = 'created',
+    Active = 'active',
+    Done = 'done',
 }
 
 export class HealingSessionManager {
@@ -116,7 +128,7 @@ export class HealingSessionManager {
             // eventually add service_id and healer_id
             .eq('id', this.#sessionId)
             .eq('uid', this.#uid)
-            .is('status', null)
+            .neq('status', Status.done)
             .single();
 
         return await handleResponse(res);

@@ -134,7 +134,7 @@ export interface Database {
           healer_id: number
           id: number
           service_id: number
-          status: string | null
+          status: Database["public"]["Enums"]["session_status"]
           step_id: number | null
           uid: string
         }
@@ -143,7 +143,7 @@ export interface Database {
           healer_id?: number
           id?: number
           service_id?: number
-          status?: string | null
+          status?: Database["public"]["Enums"]["session_status"]
           step_id?: number | null
           uid?: string
         }
@@ -152,7 +152,7 @@ export interface Database {
           healer_id?: number
           id?: number
           service_id?: number
-          status?: string | null
+          status?: Database["public"]["Enums"]["session_status"]
           step_id?: number | null
           uid?: string
         }
@@ -222,7 +222,7 @@ export interface Database {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      session_status: "created" | "active" | "done"
     }
     CompositeTypes: {
       [_ in never]: never

@@ -10,3 +10,5 @@ export type Healer = Tables<'healer'>;
 export type Service = Tables<'service'>;
 export type Moment = Tables<'moment'>;
 export type Session = Tables<'session'>;
+
+export type SessionStatus = Enums<'session_status'>;
