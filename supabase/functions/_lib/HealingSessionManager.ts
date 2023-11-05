@@ -158,10 +158,10 @@ export class HealingSessionManager {
     }
 
     updateSessionStep(stepId: number): Promise<void> {
-        return this.#updateSession({ step_id: stepId });
+        return this.#updateSession({ step_id: stepId, status: Status.Active });
     }
 
-    updateSessionStatus(status: string): Promise<void> {
+    updateSessionStatus(status: SessionStatus): Promise<void> {
         return this.#updateSession({ status });
     }
 

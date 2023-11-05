@@ -216,7 +216,20 @@ export interface Database {
       }
     }
     Views: {
-      [_ in never]: never
+      restored_session: {
+        Row: {
+          responses: string | null
+          session_id: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "moment_session_id_fkey"
+            columns: ["session_id"]
+            referencedRelation: "session"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Functions: {
       [_ in never]: never

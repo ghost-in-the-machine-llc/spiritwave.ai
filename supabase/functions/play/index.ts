@@ -25,55 +25,41 @@ async function handler(req: Request): Promise<Response> {
         if (sessionInfo.status === SessionStatus.Done) {
             return getSessionDoneResponse(sessionId);
         }
+
         const priorStepId = sessionInfo.step_id;
+        const [priorMessages, step] = await Promise.all([
+            manager.getPriorMessages(priorStepId),
+            manager.getStepAfter(priorStepId),
+        ]);
 
-        console.log({ priorStepId });
-
-        let priorMessages: Message[], step: Step;
-        try {
-            [priorMessages, step] = await Promise.all([
-                manager.getPriorMessages(priorStepId),
-                manager.getStepAfter(priorStepId),
-            ]);
-        } catch (err) {
-            console.error(err);
-            throw err;
+        if (!step) {
+            // done, no more steps...
+            manager.updateSessionStatus('done');
+            return getSessionDoneResponse(sessionId);
         }
 
-        return new Response(JSON.stringify({ step, priorMessages }), {
+        const messages = await getPromptMessages(manager, priorMessages, step);
+        const { status, stream } = await streamCompletion(messages);
+        const [response, save] = stream.tee();
+
+        // We are going to start responding with the stream
+        // and don't want to block just to do post-message clean-up.
+        // By not "awaiting" and using events, we allow code execution
+        // to move thru these lines and get to the response...
+        manager.updateSessionStep(step.id);
+        save
+            .pipeTo(getAllContent((response) => {
+                manager.saveMoment({ messages, response, step_id: step.id });
+            }));
+
+        return new Response(response.pipeThrough(new TextEncoderStream()), {
             headers: {
-                'content-type': 'application/json',
+                ...corsHeaders,
+                'content-type': 'text/event-stream; charset=utf-8',
+                'x-content-type-options': 'nosniff',
             },
+            status: status,
         });
-
-        // if (!step) {
-        //     // done, no more steps...
-        //     manager.updateSessionStatus('done');
-        //     return getSessionDoneResponse(sessionId);
-        // }
-
-        // const messages = await getPromptMessages(manager, priorMessages, step);
-        // const { status, stream } = await streamCompletion(messages);
-        // const [response, save] = stream.tee();
-
-        // // We are going to start responding with the stream
-        // // and don't want to block just to do post-message clean-up.
-        // // By not "awaiting" and using events, we allow code execution
-        // // to move thru these lines and get to the response...
-        // manager.updateSessionStep(step.id);
-        // save
-        //     .pipeTo(getAllContent((response) => {
-        //         manager.saveMoment({ messages, response, step_id: step.id });
-        //     }));
-
-        // return new Response(response.pipeThrough(new TextEncoderStream()), {
-        //     headers: {
-        //         ...corsHeaders,
-        //         'content-type': 'text/event-stream; charset=utf-8',
-        //         'x-content-type-options': 'nosniff',
-        //     },
-        //     status: status,
-        // });
     } catch (err) {
         const { message } = err;
         console.error(err);
@@ -139,6 +125,7 @@ function getSessionDoneResponse(sessionId: number): Response {
     return new Response(null, {
         headers: {
             ...corsHeaders,
+            'content-length': '0',
         },
         status: Status.NoContent,
     });
@@ -152,3 +139,9 @@ function getNoSessionResponse(): Response {
         status: Status.BadRequest,
     });
 }
+
+// return new Response(JSON.stringify({ step, priorMessages }), {
+//     headers: {
+//         'content-type': 'application/json',
+//     },
+// });
