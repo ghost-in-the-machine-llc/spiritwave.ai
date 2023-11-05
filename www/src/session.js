@@ -21,7 +21,7 @@ export async function startSession() {
             await injectContinue();
         }
 
-    // eslint-disable-next-line no-constant-condition
+        // eslint-disable-next-line no-constant-condition
         while (true) {
             const stream = await getStream(sessionId);
             if (!stream) {
@@ -33,6 +33,7 @@ export async function startSession() {
         }
     }
     catch (err) {
+        // eslint-disable-next-line no-console
         console.error(err);
         alert('Oh noes, something went wrong!\n\n' + err.message);
     }
