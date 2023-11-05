@@ -128,7 +128,7 @@ export class HealingSessionManager {
             // eventually add service_id and healer_id
             .eq('id', this.#sessionId)
             .eq('uid', this.#uid)
-            .neq('status', Status.done)
+            .neq('status', Status.Done)
             .single();
 
         return await handleResponse(res);
