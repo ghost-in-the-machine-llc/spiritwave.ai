@@ -65,6 +65,7 @@ export interface Database {
           messages: Json
           response: string
           session_id: number
+          step_id: number
           uid: string
         }
         Insert: {
@@ -73,6 +74,7 @@ export interface Database {
           messages: Json
           response: string
           session_id: number
+          step_id: number
           uid: string
         }
         Update: {
@@ -81,6 +83,7 @@ export interface Database {
           messages?: Json
           response?: string
           session_id?: number
+          step_id?: number
           uid?: string
         }
         Relationships: [
@@ -88,6 +91,12 @@ export interface Database {
             foreignKeyName: "moment_session_id_fkey"
             columns: ["session_id"]
             referencedRelation: "session"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "moment_step_id_fkey"
+            columns: ["step_id"]
+            referencedRelation: "step"
             referencedColumns: ["id"]
           },
           {

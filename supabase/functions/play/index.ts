@@ -1,10 +1,11 @@
 import { Status, STATUS_TEXT } from 'http/status';
 import { corsHeaders, handleCors } from '../_lib/cors.ts';
 import { HealingSessionManager } from '../_lib/HealingSessionManager.ts';
-import { createMessages } from '../_lib/prompt.ts';
-import { streamCompletion } from '../_lib/openai.ts';
+import { createMessages, createMessagesFrom } from '../_lib/prompt.ts';
+import { Message, streamCompletion } from '../_lib/openai.ts';
 import { HttpError } from '../_lib/http.ts';
 import { getAllContent } from '../_lib/streams.ts';
+import { Step } from '../database.types.ts';
 
 async function handler(req: Request): Promise<Response> {
     const corsResponse = handleCors(req.method);
@@ -16,45 +17,34 @@ async function handler(req: Request): Promise<Response> {
         const userToken = getUserToken(req.headers);
 
         const manager = new HealingSessionManager(userToken, sessionId);
-        const { healer, service, step_id } = await manager.getSession();
+        const sessionInfo = await manager.getOpenSessionInfo();
+        if (!sessionInfo) return getNoSessionResponse();
+        if (sessionInfo.status === 'done') {
+            return getSessionDoneResponse(sessionId);
+        }
+        const priorStepId = sessionInfo.step_id;
 
-        const step = await manager.getStepAfter(step_id);
-        if (!step) {
-            // done, no more steps...
-            // update status in healing session
-            // TODO: how should we signal this to the requestor?
-            return new Response('done', {
-                headers: {
-                    ...corsHeaders,
-                },
-                status: 200, // there is probably some code for this
-            });
+        console.log({ priorStepId });
+
+        let priorMessages: Message[], step: Step;
+        try {
+            [priorMessages, step] = await Promise.all([
+                manager.getPriorMessages(priorStepId),
+                manager.getStepAfter(priorStepId),
+            ]);
+        } catch (err) {
+            console.error(err);
+            throw err;
         }
 
-        const messages = createMessages(healer, service, step);
-        const { status, stream } = await streamCompletion(messages);
-        const [response, save] = stream.tee();
-
-        // We are going to start responding with the stream
-        // and don't want to block just to do post-message clean-up.
-        // By not "awaiting" and using events, we allow code execution
-        // to move thru these lines and get to the response...
-        manager.updateSessionStep(sessionId, step.id);
-        save
-            .pipeTo(getAllContent((response) => {
-                console.log({ sessionId, messages, response });
-            }));
-
-        return new Response(response.pipeThrough(new TextEncoderStream()), {
+        return new Response(JSON.stringify({ step, priorMessages }), {
             headers: {
-                ...corsHeaders,
-                'content-type': 'text/event-stream; charset=utf-8',
-                'x-content-type-options': 'nosniff',
+                'content-type': 'application/json',
             },
-            status: status,
         });
     } catch (err) {
         const { message } = err;
+        console.error(err);
 
         if (err.code === 'PGRST116') {
             throw new HttpError(
@@ -70,8 +60,6 @@ async function handler(req: Request): Promise<Response> {
             });
         }
 
-        console.log(err);
-
         return new Response(message ?? err.toString(), {
             status: Status.InternalServerError,
             statusText: STATUS_TEXT[Status.InternalServerError],
@@ -80,6 +68,17 @@ async function handler(req: Request): Promise<Response> {
 }
 
 Deno.serve(handler);
+
+async function getPromptMessages(
+    manager: HealingSessionManager,
+    priorMessages: Message[],
+    step: Step,
+): Promise<Message[]> {
+    if (priorMessages.length) return createMessagesFrom(priorMessages, step);
+
+    const { healer, service } = await manager.getFullSessionInfo();
+    return createMessages(healer, service, step);
+}
 
 function getUserToken(headers: Headers): string {
     const auth = headers.get('Authorization')!;
@@ -98,8 +97,26 @@ function getSessionId(url: URL): number {
     return Number.parseInt(sessionId);
 }
 
-// return new Response(JSON.stringify({ healer, service, step_id }), {
-//     headers: {
-//         'content-type': 'application/json',
-//     },
-// });
+function getSessionDoneResponse(sessionId: number): Response {
+    // const body = {
+    //     message: 'Healing Session Complete',
+    //     complete: true,
+    //     sessionId,
+    // };
+
+    return new Response(null, {
+        headers: {
+            ...corsHeaders,
+        },
+        status: Status.NoContent,
+    });
+}
+
+function getNoSessionResponse(): Response {
+    return new Response(JSON.stringify({ message: 'No open session found' }), {
+        headers: {
+            ...corsHeaders,
+        },
+        status: Status.BadRequest,
+    });
+}

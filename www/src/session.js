@@ -5,15 +5,15 @@ import { htmlToDomStream } from './streams.js';
 const output = document.getElementById('output'); // *** output
 
 export async function startSession() {
-    const { data, error } = await createSession();
-    if (error) {
-        // eslint-disable-next-line no-console
-        console.log(error);
-        return;
-    }
+    // const { data, error } = await createSession();
+    // if (error) {
+    //     // eslint-disable-next-line no-console
+    //     console.log(error);
+    //     return;
+    // }
     
-    const { id: sessionId } = data;
-    const stream = await getStream(sessionId);
+    // const { id: sessionId } = data;
+    const stream = await getStream(16 /*sessionId*/);
     await tryStream(stream);
     await injectContinue();
 

@@ -1,21 +1,36 @@
-import {
+import type {
     PostgrestMaybeSingleResponse,
     PostgrestSingleResponse,
     SupabaseClient,
 } from '@supabase/types';
 import type { Database } from '../schema.gen.ts';
-import type { Healer, Service, Step } from '../database.types.ts';
+import type { Healer, Moment, Service, Step } from '../database.types.ts';
+import type { Message } from './openai.ts';
+
 import {
-    createClient,
+    // createClient,
     createServiceClient,
     handleResponse,
 } from './supabase.ts';
 import { getUserPayload } from './jwt.ts';
 
+interface SessionInfo {
+    id: number;
+    step_id: number;
+    status: string;
+}
+
 interface Session {
+    id: number;
+    step_id: number;
     healer: Healer;
     service: Service;
+}
+
+interface NewMoment {
     step_id: number;
+    messages: Message[];
+    response: string;
 }
 
 export class HealingSessionManager {
@@ -71,7 +86,24 @@ export class HealingSessionManager {
     }
     */
 
-    async getSession(): Promise<Session> {
+    async getOpenSessionInfo(): Promise<SessionInfo> {
+        const res: PostgrestMaybeSingleResponse<SessionInfo> = await this
+            .#serviceClient
+            .from('session')
+            .select(`
+                id,
+                step_id,
+                status
+            `)
+            // eventually add service_id and healer_id
+            .eq('id', this.#sessionId)
+            .eq('uid', this.#uid)
+            .maybeSingle();
+
+        return await handleResponse(res);
+    }
+
+    async getFullSessionInfo(): Promise<Session> {
         const res: PostgrestSingleResponse<Session> = await this
             .#serviceClient
             .from('session')
@@ -104,15 +136,58 @@ export class HealingSessionManager {
         return handleResponse(res);
     }
 
-    async updateSessionStep(sessionId: number, stepId: number) {
+    async #updateSession(update: object): Promise<void> {
         const { error } = await this.#serviceClient
             .from('session')
-            .update({ step_id: stepId })
-            .eq('id', sessionId);
+            .update(update)
+            .eq('id', this.#sessionId);
 
         if (error) throw error;
     }
 
-    async saveMoment(): Promise<void> {
+    updateSessionStep(stepId: number): Promise<void> {
+        return this.#updateSession({ step_id: stepId });
+    }
+
+    updateSessionStatus(status: string): Promise<void> {
+        return this.#updateSession({ status });
+    }
+
+    async getPriorMessages(stepId: number | null): Promise<Message[]> {
+        if (!stepId) return [];
+
+        const res = await this.#serviceClient
+            .from('moment')
+            .select('*')
+            .match({
+                session_id: this.#sessionId,
+                step_id: stepId,
+                uid: this.#uid,
+            })
+            .single();
+
+        const data = handleResponse(res)!;
+        return JSON.parse(<string> data.messages).messages;
+    }
+
+    async saveMoment(moment: NewMoment): Promise<any> {
+        // PG doesn't deal with whole arrays in json columns,
+        // so we make it an object
+        const messages = {
+            messages: [
+                ...moment.messages,
+                { role: 'assistant', content: moment.response },
+            ],
+        };
+
+        const res = await this.#serviceClient
+            .from('moment')
+            .insert({
+                ...moment,
+                messages: JSON.stringify(messages),
+                uid: this.#uid,
+                session_id: this.#sessionId,
+            });
+        return res;
     }
 }

@@ -21,3 +21,13 @@ export function createMessages(
         { role: 'user', content: `${SYNTAX}\n${step.content}` },
     ];
 }
+
+export function createMessagesFrom(
+    messages: Message[],
+    step: Step,
+): Message[] {
+    return [
+        ...messages,
+        { role: 'user', content: `${SYNTAX}\n${step.content}` },
+    ];
+}

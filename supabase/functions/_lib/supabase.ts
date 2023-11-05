@@ -55,5 +55,5 @@ export function handleResponse<T>(
     { data, error }: DataOrErrorResponse<T>,
 ): NonNullable<T> {
     if (error) throw error;
-    return data!;
+    return data as NonNullable<T>;
 }
