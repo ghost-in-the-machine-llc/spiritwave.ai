@@ -1,28 +1,33 @@
-import { createSession } from './services/sessions.js';
+import { getSession } from './services/sessions.js';
 import { getStream } from './services/spirit-wave.js';
 import { htmlToDomStream } from './streams.js';
 
 const output = document.getElementById('output'); // *** output
 
 export async function startSession() {
-    // const { data, error } = await createSession();
-    // if (error) {
-    //     // eslint-disable-next-line no-console
-    //     console.log(error);
-    //     return;
-    // }
-    
-    // const { id: sessionId } = data;
-    const stream = await getStream(16 /*sessionId*/);
-    await tryStream(stream);
-    await injectContinue();
+    const { session, error } = await getSession();
+    if (error) {
+        // eslint-disable-next-line no-console
+        console.log(error);
+        return;
+    }
+    const sessionId = session.id;
 
-    const done = document.createElement('p');
-    done.textContent = 'all done';
-    output.append(done); // *** output
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+        const stream = await getStream(sessionId);
+        if (!stream) {
+            injectDone();
+            break;
+        }
+        await streamToDom(stream);
+        await injectContinue();
+    }
 }
 
-async function tryStream(stream) {
+
+
+async function streamToDom(stream) {
     const domStream = htmlToDomStream(output); // *** output
     try {
         await stream.pipeTo(domStream);
@@ -54,4 +59,10 @@ async function injectContinue() {
             resolve();
         });
     });
+}
+
+async function injectDone() {
+    const done = document.createElement('p');
+    done.textContent = 'all done';
+    output.append(done); // *** output
 }

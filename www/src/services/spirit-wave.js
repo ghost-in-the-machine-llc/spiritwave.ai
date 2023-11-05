@@ -3,23 +3,14 @@ import { token } from './auth.js';
 const SUPABASE_PROJECT_URL = window.SUPABASE_PROJECT_URL || '';
 const API_URL = `${SUPABASE_PROJECT_URL}/functions/v1/play`;
 
+const NO_CONTENT_MEANS_DONE = 204;
+
 export async function getStream(sessionId) {
     const res = await getResponse(API_URL, sessionId);
+    await handleNotOk(res);
+    if (res.status === NO_CONTENT_MEANS_DONE) return null;
+    return res.body.pipeThrough(new TextDecoderStream());
 
-    try {
-        await handleNotOk(res);
-        return res.body.pipeThrough(new TextDecoderStream());
-    }
-    catch (err) {
-        //TODO: handle more failures: 
-        // - no body
-        // - piping issues thru textdecoder?
-
-        // eslint-disable-next-line no-console
-        console.log (err);
-        if (err instanceof ConnectivityError) throw err;
-        throw new FetchError(err);
-    }
 }
 
 function getResponse(url, sessionId) {
@@ -31,8 +22,6 @@ function getResponse(url, sessionId) {
         });
     }
     catch (err) {
-        // eslint-disable-next-line no-console
-        console.log (err);
         throw new ConnectivityError(err);
     }
 }
@@ -67,7 +56,7 @@ async function handleNotOk(res) {
     }
     catch (_) { /* no-op */ }
 
-    throw error;
+    throw new FetchError(res.statusCode, res.statusText, error);
 }
 
 
