@@ -6,18 +6,13 @@ import type {
 import type { Database } from '../schema.gen.ts';
 import type {
     Healer,
-    Moment,
     Service,
     SessionStatus,
     Step,
 } from '../database.types.ts';
 import type { Message } from './openai.ts';
 
-import {
-    // createClient,
-    createServiceClient,
-    handleResponse,
-} from './supabase.ts';
+import { createServiceClient, handleResponse } from './supabase.ts';
 import { getUserPayload } from './jwt.ts';
 
 interface SessionInfo {
@@ -60,43 +55,6 @@ export class HealingSessionManager {
         // this.#userClient = createClient(userToken);
         this.#serviceClient = createServiceClient();
     }
-
-    /*
-    async getHealer(healerId: number): Promise<Healer> {
-        const res: PostgrestSingleResponse<Healer> = await this.#userClient
-            .from('healer')
-            .select()
-            .eq('id', 99)
-            .single();
-
-        return await handleResponse(res);
-    }
-
-    async getService(serviceId: number): Promise<Service> {
-        const res: PostgrestSingleResponse<Service> = await this.#userClient
-            .from('service')
-            .select()
-            .eq('id', serviceId)
-            .single();
-
-        return await handleResponse(res);
-    }
-
-    async getSessionInfo(sessionId: number): Promise<StepInfo> {
-        const res: PostgrestMaybeSingleResponse<StepInfo> = await this
-            .#userClient
-            .from('session')
-            .select(`
-                step_id,
-                healer_id,
-                service_id
-            `)
-            .eq('id', sessionId)
-            .maybeSingle();
-
-        return await handleResponse(res);
-    }
-    */
 
     async getOpenSessionInfo(): Promise<SessionInfo> {
         const res: PostgrestMaybeSingleResponse<SessionInfo> = await this
@@ -182,9 +140,9 @@ export class HealingSessionManager {
         return JSON.parse(<string> data.messages).messages;
     }
 
-    async saveMoment(moment: NewMoment): Promise<any> {
+    async saveMoment(moment: NewMoment): Promise<void> {
         // PG doesn't deal with whole arrays in json columns,
-        // so we make it an object
+        // so we make it an object... :shrug:
         const messages = {
             messages: [
                 ...moment.messages,
@@ -192,14 +150,18 @@ export class HealingSessionManager {
             ],
         };
 
-        const res = await this.#serviceClient
+        const { error } = await this.#serviceClient
             .from('moment')
             .insert({
                 ...moment,
+                // parse the response string as JSON to decode
+                // encoded characters like \", \', \n, etc.
+                response: JSON.parse(JSON.stringify(moment.response)),
                 messages: JSON.stringify(messages),
                 uid: this.#uid,
                 session_id: this.#sessionId,
             });
-        return res;
+
+        if (error) throw error;
     }
 }

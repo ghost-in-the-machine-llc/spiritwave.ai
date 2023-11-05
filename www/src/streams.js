@@ -22,6 +22,15 @@ export function htmlToDomStream(target) {
     });
 }
 
+export function contentToReadableStream(content) {
+    return new ReadableStream({
+        pull(controller) {
+            controller.enqueue(content);
+            controller.close();
+        }
+    });
+}
+
 function setupProxy(append) {
     const iframe = document.createElement('iframe');
     iframe.style.display = 'none';

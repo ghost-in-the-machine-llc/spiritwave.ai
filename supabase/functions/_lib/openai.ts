@@ -13,7 +13,6 @@ export interface Message {
 export async function streamCompletion(
     messages: Message[],
 ): Promise<{ status: Status; stream: ReadableStream }> {
-    console.log(messages);
     const res = await fetch(
         COMPLETIONS_URL,
         {
@@ -36,7 +35,6 @@ export async function streamCompletion(
 
     if (!ok) {
         const text = await res.text();
-        console.log(text);
         let message = text;
         try {
             message = JSON.parse(text);

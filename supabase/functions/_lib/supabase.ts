@@ -7,10 +7,10 @@ import type {
 import { createClient as createSb } from '@supabase';
 
 const URL = Deno.env.get('SUPABASE_URL') ?? '';
-const API_KEY = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+// const API_KEY = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ??
     '';
-const SERVICE_AUTH_HEADER = `Bearer ${SERVICE_ROLE_KEY}`;
+// const SERVICE_AUTH_HEADER = `Bearer ${SERVICE_ROLE_KEY}`;
 
 export function createClient(
     token: string,
@@ -34,9 +34,6 @@ export function createServiceClient(): SupabaseClient {
         URL,
         SERVICE_ROLE_KEY,
         {
-            // global: {
-            //     headers: { Authorization: SERVICE_AUTH_HEADER },
-            // },
             auth: {
                 persistSession: false,
                 autoRefreshToken: false,

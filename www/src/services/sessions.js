@@ -12,7 +12,7 @@ export const Status = {
 export async function getSession() {
     let { data, error } = await client
         .from('session')
-        .select('id')
+        .select('id, status')
         .neq('status', Status.Done)
         .order('created_at')
         .limit(1)
@@ -32,3 +32,12 @@ function createSession() {
         .select('id')
         .single();
 }
+
+export async function restoreSession(sessionId) {
+    return client
+        .from('restored_session')
+        .select('responses')
+        .eq('session_id', sessionId)
+        .single();
+}
+

@@ -116,16 +116,11 @@ function getSessionId(url: URL): number {
 }
 
 function getSessionDoneResponse(sessionId: number): Response {
-    // const body = {
-    //     message: 'Healing Session Complete',
-    //     complete: true,
-    //     sessionId,
-    // };
-
     return new Response(null, {
         headers: {
             ...corsHeaders,
-            'content-length': '0',
+            'x-healing-session-id': `${sessionId}`,
+            'content-length': `${0}`,
         },
         status: Status.NoContent,
     });

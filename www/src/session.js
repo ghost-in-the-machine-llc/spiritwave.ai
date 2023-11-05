@@ -1,45 +1,63 @@
-import { getSession } from './services/sessions.js';
+import { getSession, restoreSession, Status } from './services/sessions.js';
 import { getStream } from './services/spirit-wave.js';
-import { htmlToDomStream } from './streams.js';
+import { contentToReadableStream, htmlToDomStream } from './streams.js';
 
 const output = document.getElementById('output'); // *** output
 
 export async function startSession() {
-    const { session, error } = await getSession();
-    if (error) {
+    try {
+
+    
+        const { session, error } = await getSession();
+        if (error) {
         // eslint-disable-next-line no-console
-        console.log(error);
-        return;
-    }
-    const sessionId = session.id;
+            console.log(error);
+            return;
+        }
+        const sessionId = session.id;
+
+        if (session.status === Status.Active) {
+            await injectRestore(sessionId);
+            await injectContinue();
+        }
 
     // eslint-disable-next-line no-constant-condition
-    while (true) {
-        const stream = await getStream(sessionId);
-        if (!stream) {
-            injectDone();
-            break;
+        while (true) {
+            const stream = await getStream(sessionId);
+            if (!stream) {
+                injectDone();
+                break;
+            }
+            await streamToDom(stream);
+            await injectContinue();
         }
-        await streamToDom(stream);
-        await injectContinue();
+    }
+    catch (err) {
+        console.error(err);
+        alert('Oh noes, something went wrong!\n\n' + err.message);
     }
 }
 
-
-
 async function streamToDom(stream) {
     const domStream = htmlToDomStream(output); // *** output
-    try {
-        await stream.pipeTo(domStream);
-    }
-    catch (err) {
-        // TODO: better handling of failures. maybe a service at some point
-        let message = err?.message;
-        if (typeof message === 'object') {
-            message = JSON.stringify(message, true, 2);
-        }
-        alert(err?.constructor?.name + ' - ' + message);
-    }
+    return stream.pipeTo(domStream);
+}
+
+async function injectRestore(sessionId) {
+    const p = document.createElement('p');
+    p.textContent = 'Restoring healing session...';
+    output.append(p); // *** output
+    p.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+    });
+
+    const { data, error } = await restoreSession(sessionId);
+    if (error) throw error;
+
+    const stream = contentToReadableStream(data.responses);
+    await streamToDom(stream);
+    p.remove();
 }
 
 async function injectContinue() {
