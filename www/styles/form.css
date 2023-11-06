@@ -1,3 +1,8 @@
+form {
+    display: grid;
+    grid-gap: 10px;
+    
+}
 
 form input {
     font-size: calc(1rem + ( var(--scale) * 3));
@@ -21,4 +26,12 @@ form button {
     background: var(--lead-color);
     border: 0;
     color: white;
+}
+
+form p {
+    margin: 0;
+}
+
+.error {
+    color: var(--error-color);
 }

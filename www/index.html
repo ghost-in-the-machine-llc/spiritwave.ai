@@ -9,15 +9,16 @@
 
     <!-- social sharing -->
     <meta property="og:title" content="Join us for SpiritWave.ai, Your Spiritually-Infused AI Shaman">
-    <meta property="og:site_name" content="Ghost in the Machine LLC">
+    <meta property="og:site_name" content="SpiritWave AI">
     <meta property="og:type" content="website">
     <meta property="og:description"
         content="An extraordinary adventure to redefine the essence of AI, weaving mythos and timeless wisdom for personalized growth and collective evolution. Ghost in the Machine is bringing to life &quot;AI for the best in us&quot;">
 
-    <meta property="og:image" content="https://ghostinthemachine.ai/assets/gitm-share.png">
+    <meta property="og:image"
+        content="https://res.cloudinary.com/deqcoeqhd/image/upload/c_fill,f_auto,h_630,q_auto,w_1200,y_0/v1699232304/spiritwave.ai/spiritwave-beach_uk6cei.png">
     <meta property="og:image:alt" content="AI for the best in us: weaving magic, nature, and technology">
     <meta property="og:url" content="https://ghostinthemachine.ai/join">
-    <meta name="twitter:image" content="https://ghostinthemachine.ai/assets/gitm-share.png">
+    <!-- <meta name="twitter:image" content="https://res.cloudinary.com/deqcoeqhd/image/upload/c_fill,f_auto,h_630,q_auto,w_1200,y_0/v1699232304/spiritwave.ai/spiritwave-beach_uk6cei.png"> -->
     <meta name="twitter:image:alt" content="AI for the best in us: weaving magic, nature, and technology">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@GitM_AI">
@@ -53,30 +54,53 @@
     <!-- styles -->
     <link rel="stylesheet" href="/styles/global.css" />
     <link rel="stylesheet" href="/styles/form.css" />
-    <!-- js -->
-    <!-- <script defer referrerpolicy="origin" crossorigin="anonymous"
-        src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
-    <script defer referrerpolicy="origin" crossorigin="anonymous"
-        src='https://storage.ko-fi.com/cdn/scripts/overlay-widget.js'></script> -->
 
+    <!-- js -->
     <script type="module" src="/src/app.js"></script>
 
 </head>
 
 <body>
     <header class="page-header">
-        <!-- <div class="logo-wrapper">
-            <img width="23" height="23" class="logo-image" src="assets/spiritwave-avatar.png"
-                alt="Ghost in the Machine logo of white ghost looking right">
-        </div> -->
         <p class="company-name">SpiritWave AI</p>
+        <button id="sign-out-button" class="hidden">sign out</button>
     </header>
 
     <main>
         <section class="banner">
-            <img src="assets/spiritwave-beach.png"
+            <img src="https://res.cloudinary.com/deqcoeqhd/image/upload/v1699232304/spiritwave.ai/spiritwave-beach_uk6cei.png"
+                srcset="
+                    https://res.cloudinary.com/deqcoeqhd/image/upload/c_scale,f_auto,q_auto,w_400/v1699232304/spiritwave.ai/spiritwave-beach_uk6cei.webp 400w,
+                    https://res.cloudinary.com/deqcoeqhd/image/upload/c_scale,f_auto,q_auto,w_800/v1699232304/spiritwave.ai/spiritwave-beach_uk6cei.webp 800w,
+                    https://res.cloudinary.com/deqcoeqhd/image/upload/f_auto,q_auto/v1699232304/spiritwave.ai/spiritwave-beach_uk6cei.webp 1024w
+                "
                 alt="Illustration of a beach under a starlit sky. In the foreground, the selkie shaman with seal-like features stands near the water's edge, surrounded by glowing sea foam. Their tribal tattoos and luminescent staff illuminate the surroundings. The background blends the beach setting with the ethereal realms of the lower world, showing floating islands, luminescent marine life, and shimmering pathways connecting different dimensions. Spirit animals accompany the selkie, guiding them through this mystical journey.">
         </section>
+
+        <section id="auth-section" class="hidden">
+            <form id="auth-form">
+                <label>
+                    Email
+                    <input name="email" type="email" placeholder="you@you.com" required>
+                </label>
+                <label>
+                    Password
+                    <input name="password" type="password" placeholder="ab$g76T" required>
+                </label>
+                <label>
+                    <button name="sign-in">Sign in</button>
+                    <button name="sign-up">Create account</button>
+                </label>
+                <p id="auth-error" class="error"></p>
+            </form>
+        </section>
+
+        <section id="session-section" class="hidden">
+            <p>
+                <button id="start-button">Let's Get Started</button>
+            </p>
+        </section>
+
         <section id="output"></section>
     </main>
 

@@ -1,0 +1,9 @@
+{
+    "imports": {
+        "@supabase": "https://esm.sh/@supabase/supabase-js@2/",
+        "@supabase/types": "https://esm.sh/@supabase/supabase-js@2/dist/module/index.d.ts",
+        "@supabase/gotrue-helpers": "https://esm.sh/v133/@supabase/gotrue-js@2.57.0/dist/module/lib/helpers.js",
+        "http/status": "https://deno.land/std/http/status.ts",
+        "@x/djwt": "https://deno.land/x/djwt@v3.0.0/mod.ts"
+    }
+}
