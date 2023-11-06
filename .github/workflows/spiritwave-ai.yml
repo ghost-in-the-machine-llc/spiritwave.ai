@@ -28,13 +28,24 @@ jobs:
       - run: npm run lint:ts
         name: Lint supabase/functions 
  
-  deploy:
-    if: github.ref_name == 'staging' || github.ref_name == 'main'
+  deploy-staging:
+    if: github.ref_name == 'staging'
     needs: run-ci
-    name: Deployment Check
+    name: Staging Deployment Check
     uses: ./.github/workflows/deploy.yml
     with:
-      project-id: ${{ github.ref_name == 'main' && vars.SUPABASE_PROJECT_ID || vars.STAGING_SUPABASE_PROJECT_ID}}
+      project-id: ${{ vars.STAGING_SUPABASE_PROJECT_ID}}
     secrets:
       token: ${{ secrets.SUPABASE_ACCESS_TOKEN }}    
-      db-password: ${{ github.ref_name == 'main' && secrets.SUPABASE_DB_PASSWORD || secrets.STAGING_SUPABASE_DB_PASSWORD}}    
+      db-password: ${{ secrets.STAGING_SUPABASE_DB_PASSWORD}}    
+
+  deploy-production:
+    if: github.ref_name == 'main'
+    needs: run-ci
+    name: Production Deployment check
+    uses: ./.github/workflows/deploy.yml
+    with:
+      project-id: ${{ vars.SUPABASE_PROJECT_ID }}
+    secrets:
+      token: ${{ secrets.SUPABASE_ACCESS_TOKEN }}    
+      db-password: ${{ secrets.SUPABASE_DB_PASSWORD }}    
