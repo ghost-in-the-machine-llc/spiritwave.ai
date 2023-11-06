@@ -8,30 +8,30 @@ export class OpenAIContentStream extends TransformStream {
                 const matches = chunk.matchAll(
                     OpenAIContentStream.contentRegEx,
                 );
-                try {
-                    for (const [, group] of matches) {
-                        // parse the JSON to decode
-                        // encoded characters like \", \', \n, etc.
-                        controller.enqueue(JSON.parse(group));
-                    }
-                } catch (err) {
-                    // eslint-disable-next-line no-console
-                    console.log(err);
+
+                for (const [, group] of matches) {
+                    // parse the JSON to decode encoded characters like \", \', \n, etc.
+                    // Note:
+                    // - group is already surrounded by "..." (part of the regex capture group)
+                    // - response is already JSON.encoded from the api, so strings are safe to parse
+                    controller.enqueue(JSON.parse(group));
                 }
             },
         });
     }
 }
 
-export function getAllContent(): TransformStream {
+export type AllContentCallback = (content: string) => void;
+
+export function getAllContent(callback: AllContentCallback) {
     let response = '';
 
-    return new TransformStream({
-        transform(chunk) {
+    return new WritableStream({
+        write(chunk) {
             response += chunk ?? '';
         },
-        flush(controller) {
-            controller.enqueue(response);
+        close() {
+            callback(response);
         },
     });
 }

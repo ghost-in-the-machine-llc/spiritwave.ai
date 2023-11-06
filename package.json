@@ -7,7 +7,9 @@
         "start": "supabase start; supabase functions serve",
         "lint": "npm run lint:js && npm run lint:ts",
         "lint:js": "npm run lint -w www",
-        "lint:ts": "deno lint"
+        "lint:ts": "deno lint",
+        "db:update-ts": "supabase gen types typescript --local > ./supabase/functions/schema.gen.ts",
+        "db:new-migration": "supabase db diff --local --schema public | supabase migration new "
     },
     "keywords": [],
     "author": "",

@@ -29,6 +29,7 @@
       "denoland",
       "Hyperlegible",
       "nosniff",
+      "openai",
       "OPENAI",
       "qunit",
       "selkie",
@@ -51,6 +52,7 @@
     "deno.enablePaths": [
       "supabase/functions"
     ],
+    "deno.importMap": "import-map.json",
     "typescript.validate.enable": false,
     "typescript.tsserver.experimental.enableProjectDiagnostics": false,
     "[typescript]": {

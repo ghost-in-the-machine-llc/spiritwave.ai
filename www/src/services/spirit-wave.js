@@ -1,45 +1,31 @@
-// Tests for this regex: https://regex101.com/r/5zXb2v/2
-const ExtractPreContentRegex = /<pre>(.+?)<\/pre>/gims;
+import { token } from './auth.js';
 
-const getStream = (url) => async () => {
-    const res = await getResponse(url);
+const SUPABASE_PROJECT_URL = window.SUPABASE_PROJECT_URL || '';
+const API_URL = `${SUPABASE_PROJECT_URL}/functions/v1/play`;
+
+const NO_CONTENT_MEANS_DONE = 204;
+
+export async function getStream(sessionId) {
+    const res = await getResponse(API_URL, sessionId);
+    await handleNotOk(res);
+    if (res.status === NO_CONTENT_MEANS_DONE) return null;
+    return res.body.pipeThrough(new TextDecoderStream());
+
+}
+
+function getResponse(url, sessionId) {
     try {
-        if (!res.ok) {
-            let error = null;
-            error = await res.text();
-            if (error.startsWith('<!DOCTYPE html>')) {
-                const matches = error.matchAll(ExtractPreContentRegex);
-                let message = `${res.status}: ${res.statusText}`;
-                for (const [, group] of matches) {
-                    message += '\n' + (group ?? '');
-                }
-
-                throw message;
+        return fetch(`${url}?sessionId=${sessionId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`
             }
-            else {
-                try {
-                    error = JSON.parse(error);
-                }
-                finally {
-                // eslint-disable-next-line no-unsafe-finally
-                    throw error;
-                }
-            }
-        }
-        
-        return res.body.pipeThrough(new TextDecoderStream());
+        });
     }
     catch (err) {
-        //TODO: handle different failures: 
-        // - res.json issues (might go in code block with .json()?)
-        // - no body
-        // - piping issues thru textdecoder?
-
-        // eslint-disable-next-line no-console
-        console.log (err);
-        throw new FetchError(err);
+        throw new ConnectivityError(err);
     }
-};
+}
+
 
 class FetchError extends Error {
     constructor(statusCode, statusText, err) {
@@ -58,31 +44,35 @@ class ConnectivityError extends Error {
     }
 }
 
-function getResponse(url) {
+async function handleNotOk(res) {
+    if (res.ok) return; 
+
+    let error = null;
+    error = await res.text();
+    handleHtmlError(error, res);
+
     try {
-        return fetch(url, {
-            headers: {
-                /* spell-checker: disable */
-                // TODO: use logged in supabase user
-                // Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0'
-                /* spell-checker: enable */
-            }
-        });
+        error = JSON.parse(error);
     }
-    catch (err) {
-        // eslint-disable-next-line no-console
-        console.log (err);
-        throw new ConnectivityError(err);
-    }
+    catch (_) { /* no-op */ }
+
+    throw new FetchError(res.statusCode, res.statusText, error);
 }
 
-const SUPABASE_PROJECT_URL = window.SUPABASE_PROJECT_URL || '';
-const API_URL = `${SUPABASE_PROJECT_URL}/functions/v1`;
 
-const API_KEY = window.SUPABASE_API_KEY;
-const API_KEY_QUERY = API_KEY ? `?apikey=${encodeURIComponent(API_KEY)}` : '';
+// Tests for this regex: https://regex101.com/r/5zXb2v/2
+const ExtractPreContentRegex = /<pre>(.+?)<\/pre>/gims;
 
-const getUrl = path => `${API_URL}${path}${API_KEY_QUERY}`;
+function handleHtmlError(error, res) {
+    // usually proxy dev server
+    if (!error.startsWith('<!DOCTYPE html>')) return;
 
-export const streamGreeting = getStream(getUrl('/greeting'));
-export const streamInvocation = getStream(getUrl('/invocation'));
+    const matches = error.matchAll(ExtractPreContentRegex);
+    let message = `${res.status}: ${res.statusText}`;
+    for (const [, group] of matches) {
+        message += '\n' + (group ?? '');
+    }
+
+    throw message;
+}
+
