@@ -7,17 +7,17 @@ export function htmlToDomStream(target) {
     });
     
     // scroll container to end so user sees latest text
-    const scrollToBottom = () => target.scrollTop = target.scrollHeight;
+    // const scrollToBottom = () => target.scrollTop = target.scrollHeight;
 
     return new WritableStream({
         write(chunk) {
             // eslint-disable-next-line eqeqeq
             if (chunk != null) proxy.write(chunk);
-            scrollToBottom();
+            // scrollToBottom();
         },
         close() {
             proxy.destroy();
-            scrollToBottom();
+            // scrollToBottom();
         },
     });
 }

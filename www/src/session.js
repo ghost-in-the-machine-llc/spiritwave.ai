@@ -48,10 +48,10 @@ async function injectRestore(sessionId) {
     const p = document.createElement('p');
     p.textContent = 'Restoring healing session...';
     output.append(p); // *** output
-    p.scrollIntoView({
-        behavior: 'smooth',
-        block: 'end',
-    });
+    // p.scrollIntoView({
+    //     behavior: 'smooth',
+    //     block: 'end',
+    // });
 
     const { data, error } = await restoreSession(sessionId);
     if (error) throw error;
@@ -67,10 +67,10 @@ async function injectContinue() {
     button.textContent = 'continue...';
     p.append(button);
     output.append(p); // *** output
-    p.scrollIntoView({
-        behavior: 'smooth',
-        block: 'end',
-    });
+    // p.scrollIntoView({
+    //     behavior: 'smooth',
+    //     block: 'end',
+    // });
         
     return new Promise(resolve => {
         button.addEventListener('click', async () => {
