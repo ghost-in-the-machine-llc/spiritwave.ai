@@ -8,7 +8,8 @@
         "lint": "npm run lint:js && npm run lint:ts",
         "lint:js": "npm run lint -w www",
         "lint:ts": "deno lint",
-        "db-types:update": "supabase gen types typescript --local > ./supabase/functions/schema.gen.ts"
+        "db:update-ts": "supabase gen types typescript --local > ./supabase/functions/schema.gen.ts",
+        "db:new-migration": "supabase db diff --local --schema public | supabase migration new "
     },
     "keywords": [],
     "author": "",
