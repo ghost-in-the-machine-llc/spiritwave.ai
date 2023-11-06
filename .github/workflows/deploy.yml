@@ -37,7 +37,7 @@ jobs:
         run: supabase link --project-ref $PROJECT_ID
         
       - name: Deploy functions
-        run: supabase functions deploy
+        run: supabase functions deploy --import-map import-map.json 
         
       - name: Push db changes    
         run: supabase db push
